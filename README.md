@@ -15,7 +15,7 @@ Open with a local browser for development. Microphone recording requires a secur
 
 ## Deploy to GitHub Pages
 
-Push these files to `main`. In the repository's Settings → Pages, choose **GitHub Actions** as the source. The included workflow publishes the static site. No deployment has been performed as part of creating these files. GitHub Pages hosting availability depends on your account and repository visibility.
+Push these files to `main`. In the repository's Settings → Pages, choose **Deploy from a branch**, select **main** and **/(root)**, and save. GitHub publishes these static files directly; `.nojekyll` disables Jekyll processing. No deployment has been performed as part of creating these files. GitHub Pages hosting availability depends on your account and repository visibility.
 
 On your iPhone, open the resulting HTTPS site in Safari, then Share → Add to Home Screen. Connect the Bluetooth speaker in iOS Settings before using the soundboard. Select the output through Control Center if needed. The app cannot pair with or force a Bluetooth audio destination. Keep the app open and phone unlocked during your event; iOS background playback is not guaranteed.
 
