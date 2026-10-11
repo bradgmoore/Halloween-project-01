@@ -1,6 +1,6 @@
 # The Well · Halloween soundboard
 
-An installable mobile web soundboard for an iPhone controlling a Halloween statue. Original dark well / haunted television styling inspired by the requested atmosphere; no film audio, artwork or licensed sound library is bundled. The twelve initial buttons play synthesized demo tones. Replace these with your own recordings or licensed audio.
+An installable mobile web soundboard for an iPhone controlling a Halloween statue. Original dark well / haunted television styling inspired by the requested atmosphere; no film audio or artwork is bundled. The online library includes twelve CC0 prop effects by Kenney. The twelve initial buttons play synthesized demo tones. Replace these with your own recordings or licensed audio.
 
 ## Run locally
 
@@ -26,13 +26,16 @@ A Windows IIS or other static server can also host these files with a trusted HT
 - Twelve programmable buttons, exclusive or overlapping playback, and emergency Stop all audio.
 - Upload audio (25 MB per clip), microphone recording with preview, and IndexedDB persistence.
 - Export/restore all twelve clips as a JSON backup. Restore validates the full backup before replacing data in one transaction.
-- An online-library tab for direct HTTPS audio URLs or a curated JSON catalog. Downloads are saved locally and require CORS-enabled sources serving an audio content type.
+- An online-library tab preconfigured with twelve hosted Kenney CC0 prop effects, preview controls and a destination selector. It also accepts direct HTTPS audio URLs or a custom JSON catalog. Downloads are saved locally and require CORS-enabled sources serving an audio content type.
 - Cached application shell for offline use after the first successful visit. User clips remain in IndexedDB.
 - Experimental live microphone passthrough, adjustable gain, explicit start/stop and automatic microphone release when the app is hidden.
 
 Local browser storage is not permanent or synced. Safari and an installed home-screen app may use separate storage. Make backups, especially before clearing data or changing where you open the app. Prefer MP3, WAV or AAC for uploads; actual codec support depends on iOS. Recording uses the browser's supported format.
 
 ## Online library
+
+The included `library.json` loads automatically with no URL configuration or API key. Twelve creaks, doors, footsteps and prop effects are served from `audio/` on the same origin, converted to MP3 for iOS. See `audio/CREDITS.md` and `audio/LICENSE-CC0.txt` for provenance and license. Preview, select a destination button, then save the clip for offline playback. The catalog shell is cached automatically; audio is cached after fetching or retained in IndexedDB when saved.
+
 
 Host a JSON document with this shape and replace the example audio URL with a real, licensed file:
 
@@ -56,6 +59,6 @@ For a native app, either wrap this UI with Capacitor and implement a native audi
 
 ## Validation
 
-Automated Chromium checks exercised the twelve pads, playback and stop, recording, persistence after reload, recorded clip playback, live microphone start/stop, offline reload, and the 430px mobile layout. Hardware iPhone/Bluetooth checks still need to be performed. No external library service has been configured or validated.
+Automated Chromium checks exercised the twelve pads, playback and stop, recording, persistence after reload, recorded clip playback, live microphone start/stop, offline reload, and the 430px mobile layout. Hardware iPhone/Bluetooth checks still need to be performed. The included library was checked with all twelve MP3 files decoded, preview/stop, assignment to button 4, persisted playback after reload, and offline catalog loading. No external provider API has been configured.
 
 See [CODEX_PROMPT.md](CODEX_PROMPT.md) for the reusable build brief.

@@ -1,0 +1,77 @@
+{
+  "title": "Haunted props \u00b7 Kenney CC0 sound effects",
+  "clips": [
+    {
+      "title": "Wooden creak",
+      "url": "audio/creak_1.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Another creak",
+      "url": "audio/creak_2.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Short creak",
+      "url": "audio/creak_3.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Door opening",
+      "url": "audio/door_open_1.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Door closing",
+      "url": "audio/door_close_1.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Door shutting",
+      "url": "audio/door_close_4.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Footstep",
+      "url": "audio/footstep_0.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Another footstep",
+      "url": "audio/footstep_4.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Metal latch",
+      "url": "audio/metal_latch.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Metal clatter",
+      "url": "audio/metal_pot_1.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Book closing",
+      "url": "audio/book_close.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    },
+    {
+      "title": "Cloth rustle",
+      "url": "audio/cloth_1.mp3",
+      "creator": "Kenney",
+      "license": "CC0 1.0"
+    }
+  ]
+}
