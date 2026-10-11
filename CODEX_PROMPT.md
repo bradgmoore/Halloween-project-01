@@ -1,0 +1,9 @@
+Build and maintain The Well, an iPhone 15 Pro Max Halloween soundboard used to operate a haunted statue while visitors approach a candy doorbell. Use the existing checkout, without creating a worktree unless requested.
+
+Deliver an HTTPS-hosted installable mobile web app with twelve programmable sound buttons, an obvious Stop all audio control, exclusive playback by default and optional overlap. Provide upload, microphone recording, preview, naming and assignment to any button. Store clips on-device using IndexedDB; support full backup export/restore and offline operation. Use original dark well / haunted television styling without copying film assets.
+
+Provide an Online library tab that accepts CORS-enabled direct audio URLs and a curated JSON catalog shaped as {"clips":[{"title":"Clip title","url":"https://host/audio.mp3"}]}. Download selected clips for offline use. Do not invent an external provider or credentials. If adding a licensed provider's API, confirm its terms and use a backend for secret credentials.
+
+Provide experimental live microphone monitoring with explicit start/stop, gain control and microphone cleanup. Clearly explain iOS routing, Bluetooth latency and feedback limitations. Do not promise browser control of Bluetooth pairing or audio routing. Test actual iPhone/speaker behavior separately from browser smoke checks.
+
+Keep static GitHub Pages hosting supported with relative paths, no build dependency requirement, a manifest, service worker and deployment workflow. Test recording, playback, persistence, stop, offline use, uploads and backup restoration. Document how to host on Windows with trusted HTTPS and how a later native SwiftUI or Capacitor version could improve audio-session control. Do not publish or deploy without user authorization.
