@@ -75,3 +75,7 @@ The runner starts its own local server. `CHROMIUM_PATH` can select an installed 
 The generated cartoon illustration is inspired by the user’s statue photo and includes the tuxedo cat, glowing doorbell and rope-lowered candy bucket. The original personal photo is not published. Artwork is cached offline. No doorbell hardware automation is implemented.
 
 The existing IndexedDB name and clip keys are retained to preserve custom sounds. All local data stays in this browser until exported. GitHub serves public app files; no analytics or cloud audio-storage service is configured. The manifest supports a home-screen app. It is not a signed native iOS application.
+
+## Beta testing and recording retention
+
+`/beta/` is an isolated copy of released v2.0 with a separate local database/settings, an automatic recording inbox, Keep flags, recording import/export/sharing, per-clip assignment, saved starting setup and reset controls that preserve recordings. Live application files remain separate. Testers use their own devices; recordings reach the organiser only through exported files at this stage. See [testing plan](TESTING_PLAN.md) and the beta's mobile-friendly `tester-guide.html`. A secure backend admin login is proposed in that plan and is not yet configured.

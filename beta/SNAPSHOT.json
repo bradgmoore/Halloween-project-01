@@ -1,0 +1,17 @@
+{
+  "source_commit": "c6b94ee1a8c6558787089e0b47cea23a4d732323",
+  "description": "Beta copied from released v2.0; production root files remain unchanged.",
+  "production_files_sha256": {
+    "index.html": "5c7eaf013be97a0edd86fde0eb995c1c2725ddfb31723e81a71cb081ad3eb12a",
+    "app.js": "405f587cc396047d302fa2403ee422d9a8eacac2c07c44ef67b1671642456ad3",
+    "style.css": "4d59b2b85ed261bd94988e1a4435e4b19832fbd9ac642c085cf2c144c4ffa458",
+    "manifest.webmanifest": "9b5cc0f38f2b9a2db51ec336c81b9a1f957545a07d63f6f76c8c605cb4ad3bc8",
+    "icon.svg": "75c31aa03011ef0b6cf6d50ccf95b6445c61c096d9ddf098ef335dbaf4ac8cb5",
+    "sw.js": "43d196f67d568986d178a2422226af570f28a183ea619502b5cadbb50c0eef77",
+    "cache-config.js": "8e1f14c9d216c6173f43d49a071c472def5e2cc573e553f32b9a2de879ed9b90",
+    "microphone.js": "a39920ec017d823b0721d422f3a9e8ae9f343b2ee09f43dafe8729a8eb254ed9",
+    "voice-effects.js": "1bebe2a136d799b412609c7bfd6f5f6464a8a2a9c10929f12f05ef4bcbd50da2",
+    "voice-processor.js": "1781dbcd4fab8feaf5b841cfb60e52a45ae83cc89db31e7234ea18842c737c55",
+    "library.json": "a44205ace6b51f3893db8dcc08f8772fd06deba8c47e864fedb9b1a5a555ab26"
+  }
+}
