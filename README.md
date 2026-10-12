@@ -28,7 +28,7 @@ A Windows IIS or other static server can also host these files with a trusted HT
 - Export/restore all twelve clips as a JSON backup. Restore validates the full backup before replacing data in one transaction.
 - A standalone Halloween-library tab with 64 clips grouped into eight categories, search and one-tap playback. Library playback does not assign clips to or modify the custom soundpad. Playing a new library clip stops the previous one; the Stop controls cancel playback.
 - Cached application shell for offline use after the first successful visit. User clips remain in IndexedDB.
-- Experimental live microphone passthrough, adjustable gain, explicit start/stop and automatic microphone release when the app is hidden.
+- Live device-microphone selection with input verification and meter, adjustable gain, Natural/Witch/Zombie/Ghoul/Demon/Ghost presets, speaker test, explicit start/stop and microphone release when the app is hidden.
 
 Local browser storage is not permanent or synced. Safari and an installed home-screen app may use separate storage. Make backups, especially before clearing data or changing where you open the app. Prefer MP3, WAV or AAC for uploads; actual codec support depends on iOS. Recording uses the browser's supported format.
 
@@ -46,14 +46,22 @@ To regenerate this collection from the repository root, install Python packages 
 
 For a future external audio archive, verify per-clip download/redistribution licenses and hosting access before adding files. A service requiring secret API credentials needs a separate HTTPS backend; never put credentials in GitHub Pages source.
 
-## iOS live voice limitations and native option
+## Live voice: microphone and filters
 
-Live voice is experimental. Bluetooth buffering causes delay; enabling the microphone can change the iOS audio route or activate a lower-quality headset mode. Some speakers have no microphone or compatible duplex profile. Browser JavaScript cannot force a particular route. Test the actual iPhone 15 Pro Max and speaker before the event, at low volume with the phone away from the speaker to prevent feedback. Browser tests establish microphone processing, not real Bluetooth routing or latency.
+In **Speak live**, tap **Find device microphone**, grant microphone permission, and select the phone/tablet input. Recognizable built-in input names are preferred. Inputs named Bluetooth, headset, AirPods, wireless or USB are excluded. Browsers with unlabeled/ambiguous inputs require manual choice; the app refuses to automatically start with an unverified default. The selected input is remembered on this browser. Before labels are available, a temporary permission stream may be opened only for device discovery and is released without playback.
 
-For a native app, either wrap this UI with Capacitor and implement a native audio plugin, or build with SwiftUI and AVAudioEngine/AVAudioSession. Native audio APIs provide more control but still cannot remove Bluetooth latency or guarantee every speaker supports live monitoring. Consider a separate wireless microphone connected to the speaker if dependable live speech is essential. Building/installing native iOS apps requires a Mac with Xcode and Apple signing. Free personal signing is short-lived and typically requires re-signing every seven days; paid developer membership supports longer distribution options such as TestFlight (builds expire after 90 days). A home-screen web app avoids signing.
+**Start speaking** requests the selected microphone with an exact `deviceId`, checks the actual track settings, and stops if the browser reports a different or unidentifiable device. This verifies browser-reported identity, not the physical hardware route. The active input label and signal meter help diagnose capture. If the meter responds but the speaker stays silent, check live volume, **Test speaker output**, and the OS audio-output route. If mic access fails, check site microphone permissions, HTTPS and browser version. Microphone loss or device changes stop live playback when the input can no longer be verified. Stop and hidden-page events release microphone tracks, including captures still starting.
+
+Choose **Natural**, **Witch**, **Zombie**, **Ghoul**, **Demon**, or **Ghost** before or while speaking. AudioWorklet processing changes pitch without changing speech speed; EQ, distortion, modulation and echo create the preset character. Natural bypasses pitch effects. Gain and a compressor limit output. Filters run locally; live audio is not recorded or uploaded. Modern Chrome or Safari with AudioWorklet over HTTPS is required. Pitch processing and echoes add latency in addition to Bluetooth buffering. Keep the device away from the speaker and begin at low volume to avoid feedback.
+
+A web app cannot guarantee that a built-in microphone and Bluetooth speaker remain simultaneously routed by iOS or Android. iOS may switch output or use a headset mode after capture begins, even when the browser reports the requested mic. Physical iPhone/Lenovo/speaker tests are required. The app cannot pair devices or force an iOS output. If the OS cannot expose the built-in mic while using the speaker, use a native audio integration or a separate microphone connected to the speaker.
+
+A native version can use SwiftUI with AVAudioEngine/AVAudioSession, or a Capacitor native audio plugin, for greater audio-session control. Native APIs still do not remove Bluetooth latency or guarantee compatibility with every speaker. Native iOS builds require a Mac, Xcode and signing; a home-screen web app avoids signing.
 
 ## Validation
 
-Browser checks exercise the 64 audio files (non-silent and decodable), eight categories, search, playback and stop, rapid-tap cancellation, exclusive playback across library and pads, custom upload persistence, tablet/phone layouts, and offline catalog/cached playback. Physical Lenovo Bluetooth and iPhone microphone routing still require device testing. No external provider API is configured.
+Browser checks exercise the 64 audio files (non-silent and decodable), eight categories, search, playback and stop, rapid-tap cancellation, exclusive playback across library and pads, custom upload persistence, tablet/phone layouts, and offline catalog/cached playback. Live-voice tests use simulated microphone identities and real browser audio processing: explicit selection, Bluetooth exclusion, input mismatch rejection, meter signal, preset switching, gain, capture cleanup, pending-start cancellation, and six non-silent distinct rendered presets. Physical Lenovo Bluetooth and iPhone microphone routing still require device testing. No external provider API is configured.
 
 See [CODEX_PROMPT.md](CODEX_PROMPT.md) for the reusable build brief.
+
+To rerun the live tests, serve the repository locally, make Playwright and Chromium available to Node, and run `WELL_TEST_URL=http://localhost:8000 node tests/live-voice.cjs`. `CHROMIUM_PATH` can select an alternative Chromium executable. These tests use generated fake audio and browser input mocks; they do not test Bluetooth hardware.

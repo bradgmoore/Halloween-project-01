@@ -1,7 +1,8 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const names=['Seven days','The well','A whisper','Footsteps','Static','Door creak','A warning','Heartbeat','Scratching','The visitor','Cold wind','Goodbye'];
-let clips=Array(12).fill(null),db,context,pending,recorder,recordStream,liveStream,liveSource,liveGain;
+let clips=Array(12).fill(null),db,context,pending,recorder,recordStream,liveStream,liveSource,liveEffects;
+let liveRequest=0,liveMeterTimer=null,voicePreset='natural',micDetectionRequest=0;
 const active=new Set();
 function status(message){$('status').textContent=message}
 function audioContext(){context??=new (window.AudioContext||window.webkitAudioContext)();return context}
@@ -16,7 +17,28 @@ if(clips[index]){const url=URL.createObjectURL(clips[index].blob),audio=new Audi
 else{const osc=c.createOscillator(),gain=c.createGain();osc.type=index%2?'sine':'triangle';osc.frequency.setValueAtTime(90+index*23,c.currentTime);osc.frequency.exponentialRampToValueAtTime(35+index*4,c.currentTime+1.4);gain.gain.setValueAtTime(0,c.currentTime);gain.gain.linearRampToValueAtTime(.15,c.currentTime+.06);gain.gain.exponentialRampToValueAtTime(.001,c.currentTime+1.5);osc.connect(gain).connect(c.destination);let stopped=false;item={index,stop:()=>{if(!stopped){stopped=true;osc.stop()}cleanup()}};active.add(item);osc.onended=()=>{stopped=true;cleanup();osc.disconnect();gain.disconnect()};osc.start();osc.stop(c.currentTime+1.6)}status(`Playing ${clips[index]?.name||names[index]}.`)}
 let previewURL;
 function setPending(blob){if(previewURL)URL.revokeObjectURL(previewURL);pending=blob;previewURL=URL.createObjectURL(blob);$('preview').src=previewURL;$('preview').hidden=false;$('save').disabled=false;status('Preview your clip, then save it to a button.')}
-function endLive(){liveSource?.disconnect();liveGain?.disconnect();liveStream?.getTracks().forEach(t=>t.stop());liveSource=liveGain=liveStream=null;$('talk').disabled=false;$('end-talk').disabled=true}
+function endLive(){++liveRequest;clearInterval(liveMeterTimer);liveMeterTimer=null;liveSource?.disconnect();liveEffects?.destroy();liveStream?.getTracks().forEach(track=>track.stop());liveSource=liveEffects=liveStream=null;$('talk').disabled=false;$('detect-mic').disabled=false;$('mic-device').disabled=false;$('end-talk').disabled=true;$('mic-meter').value=0;$('mic-level-text').textContent='Microphone off'}
+const externalMic=/bluetooth|airpods|headset|hands.?free|earbuds|usb|wireless/i;
+const internalMic=/built[ -]?in|internal|microphone array|iphone|ipad|macbook|pixel|tablet|lenovo|integrated/i;
+function deviceIsInternal(device){return internalMic.test(device.label)&&!externalMic.test(device.label)}
+function checkMicrophoneSupport(){if(!navigator.mediaDevices?.getUserMedia||!navigator.mediaDevices?.enumerateDevices)throw Error('Microphone access requires HTTPS and a recent browser.');if(!navigator.mediaDevices.getSupportedConstraints().deviceId)throw Error('This browser cannot select a microphone. Try Chrome on the Lenovo tablet.');}
+async function findMicrophones(){
+  checkMicrophoneSupport();const request=++micDetectionRequest;let probe;
+  try{let all=await navigator.mediaDevices.enumerateDevices();if(!all.some(device=>device.kind==='audioinput'&&device.label)){probe=await navigator.mediaDevices.getUserMedia({audio:true});all=await navigator.mediaDevices.enumerateDevices()}const devices=all.filter(device=>device.kind==='audioinput'&&device.deviceId);if(request!==micDetectionRequest)return [];
+    const previous=$('mic-device').value;let saved;try{saved=localStorage.getItem('well-device-mic')}catch{}
+    $('mic-device').replaceChildren();const automatic=document.createElement('option');automatic.value='';automatic.textContent='Choose the device microphone';$('mic-device').append(automatic);
+    for(const device of devices){const option=document.createElement('option');option.value=device.deviceId;option.textContent=device.label||'Unnamed microphone (identity unavailable)';option.disabled=externalMic.test(device.label)||!device.label;option.dataset.internal=String(deviceIsInternal(device));$('mic-device').append(option)}
+    const eligible=devices.filter(device=>device.label&&!externalMic.test(device.label));const builtin=eligible.find(device=>deviceIsInternal(device)&&!['default','communications'].includes(device.deviceId))||eligible.find(deviceIsInternal);const remembered=eligible.find(device=>device.deviceId===(previous||saved)&&!['default','communications'].includes(device.deviceId));const selected=remembered||builtin;
+    if(selected)$('mic-device').value=selected.deviceId;
+    $('mic-status').textContent=selected?`${deviceIsInternal(selected)?'Built-in microphone found':'Selected input; verify this is on the phone or tablet'}: ${selected.label}`:'The browser did not identify a built-in mic. Choose a labeled device input above, or disconnect the Bluetooth device microphone and retry. We will not start with an unverified default input.';
+    return devices;
+  }finally{probe?.getTracks().forEach(track=>track.stop())}
+}
+const voiceDescriptions={natural:'Natural: your voice without spooky effects.',witch:'Witch: higher pitch, sharp tone and a short echo.',zombie:'Zombie: lower pitch, muffled growl and rough distortion.',ghoul:'Ghoul: hollow metallic voice with a haunting echo.',demon:'Demon: deep pitch, heavy distortion and a dark echo.',ghost:'Ghost: airy pitch, trembling tone and a longer echo.'};
+for(const [name,preset] of Object.entries(VOICE_PRESETS)){const button=document.createElement('button');button.textContent=preset.label;button.dataset.voice=name;button.setAttribute('aria-pressed',String(name===voicePreset));button.onclick=()=>{voicePreset=name;liveEffects?.setPreset(name);for(const b of $('voice-presets').children)b.setAttribute('aria-pressed',String(b===button));$('voice-description').textContent=voiceDescriptions[name];status(`${preset.label} voice selected.`)};$('voice-presets').append(button)}
+$('mic-device').onchange=()=>{endLive();const option=$('mic-device').selectedOptions[0];$('mic-status').textContent=option.value?`Selected microphone: ${option.textContent}. Start speaking to verify the active input.`:'Choose a device microphone before starting.';try{if(option.value)localStorage.setItem('well-device-mic',option.value)}catch{}};
+action('detect-mic',async()=>{if(recorder?.state==='recording')throw Error('Finish recording before checking microphones.');endLive();$('detect-mic').disabled=true;try{await findMicrophones()}catch(e){$('mic-status').textContent=`Microphone detection failed: ${e.message}`;throw e}finally{$('detect-mic').disabled=false}});
+
 function safeUrl(value){const u=new URL(value);if(u.protocol!=='https:'&&!(u.protocol==='http:'&&['localhost','127.0.0.1'].includes(u.hostname)))throw Error('Use an HTTPS URL.');return u.href}
 
 function action(id,fn){$(id).onclick=()=>Promise.resolve().then(fn).catch(e=>status(e.message))}
@@ -29,8 +51,33 @@ action('clear',async()=>{if(confirm('Reset this button to its demo sound?')){awa
 action('record',async()=>{if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw Error('Recording requires Safari with microphone access over HTTPS.');endLive();for(const a of [...active])a.stop();recordStream=await navigator.mediaDevices.getUserMedia({audio:true});try{recorder=new MediaRecorder(recordStream)}catch(e){recordStream.getTracks().forEach(t=>t.stop());throw e}const chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{recordStream.getTracks().forEach(t=>t.stop());$('record').disabled=false;$('finish').disabled=true;if(chunks.length)setPending(new Blob(chunks,{type:recorder.mimeType}));else status('Recording produced no audio.')};recorder.onerror=()=>{recordStream.getTracks().forEach(t=>t.stop());$('record').disabled=false;$('finish').disabled=true;status('Recording failed. Try again.')};recorder.start();$('record').disabled=true;$('finish').disabled=false;status('Recording… tap Finish recording when done.')});
 action('finish',()=>{if(recorder?.state==='recording')recorder.stop()});
 action('stop',stopAudio);
-action('talk',async()=>{if(recorder?.state==='recording')throw Error('Finish recording first.');const c=audioContext();await c.resume();for(const a of [...active])a.stop();liveStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}});try{liveSource=c.createMediaStreamSource(liveStream);liveGain=c.createGain();liveGain.gain.value=Number($('gain').value);liveSource.connect(liveGain).connect(c.destination);$('talk').disabled=true;$('end-talk').disabled=false;status('Microphone live. Verify the actual speaker output on your iPhone.')}catch(e){endLive();throw e}});
-action('end-talk',()=>{endLive();status('Microphone stopped.')});$('gain').oninput=()=>{if(liveGain)liveGain.gain.value=Number($('gain').value)};
+action('talk',async()=>{
+  if(recorder?.state==='recording')throw Error('Finish recording first.');
+  checkMicrophoneSupport();endLive();stopPreview();for(const a of [...active])a.stop();const request=++liveRequest;
+  $('talk').disabled=true;$('end-talk').disabled=false;$('detect-mic').disabled=true;let stream,source,effects;
+  try{
+    const c=audioContext();await c.resume();await VoiceEffects.prepare(c);if(request!==liveRequest)return;
+    if(!$('mic-device').value)await findMicrophones();if(request!==liveRequest)return;
+    const id=$('mic-device').value;if(!id)throw Error('No built-in microphone identified. Select the device microphone above before speaking.');
+    if(externalMic.test($('mic-device').selectedOptions[0].textContent))throw Error('Choose the phone or tablet microphone rather than a Bluetooth/headset input.');
+    $('mic-device').disabled=true;
+    stream=await navigator.mediaDevices.getUserMedia({audio:{deviceId:{exact:id},echoCancellation:true,noiseSuppression:true,autoGainControl:false}});
+    if(request!==liveRequest){stream.getTracks().forEach(track=>track.stop());return}
+    const track=stream.getAudioTracks()[0],settings=track.getSettings();
+    if(!settings.deviceId||settings.deviceId!==id||externalMic.test(track.label))throw Error('The browser did not confirm the requested device microphone. Live output stopped; choose the built-in mic and retry.');
+    await c.resume();if(request!==liveRequest){stream.getTracks().forEach(track=>track.stop());return}
+    source=c.createMediaStreamSource(stream);effects=new VoiceEffects(c,source,c.destination,Number($('gain').value));effects.setPreset(voicePreset);
+    liveStream=stream;liveSource=source;liveEffects=effects;
+    track.onended=()=>{if(request===liveRequest){endLive();$('mic-status').textContent='Microphone disconnected. Find the device microphone and start again.';status('Live microphone disconnected.')}};
+    $('mic-status').textContent=`Active input: ${track.label||$('mic-device').selectedOptions[0].textContent}. Requested microphone confirmed by the browser.`;
+    const samples=new Float32Array(effects.meter.fftSize);liveMeterTimer=setInterval(()=>{effects.meter.getFloatTimeDomainData(samples);const rms=Math.sqrt(samples.reduce((sum,value)=>sum+value*value,0)/samples.length);$('mic-meter').value=Math.min(1,rms*4);$('mic-level-text').textContent=rms>.008?'Receiving microphone audio':'Listening—speak near the device microphone'},100);
+    status(`Microphone live · ${VOICE_PRESETS[voicePreset].label} voice. Check the meter and Bluetooth speaker output.`);
+  }catch(e){source?.disconnect();effects?.destroy();stream?.getTracks().forEach(track=>track.stop());if(request===liveRequest){endLive();$('mic-status').textContent=`Live voice could not start: ${e.message}`;throw e}}
+});
+action('end-talk',()=>{endLive();status('Microphone stopped.')});$('gain').oninput=()=>liveEffects?.setLevel(Number($('gain').value));
+action('test-speaker',async()=>{const c=audioContext();await c.resume();const oscillator=c.createOscillator(),gain=c.createGain();oscillator.frequency.value=440;gain.gain.setValueAtTime(.08,c.currentTime);gain.gain.exponentialRampToValueAtTime(.001,c.currentTime+.6);oscillator.connect(gain).connect(c.destination);const item={stop:()=>{try{oscillator.stop()}catch{}oscillator.disconnect();gain.disconnect();active.delete(item)}};active.add(item);oscillator.onended=item.stop;oscillator.start();oscillator.stop(c.currentTime+.65);status('Playing a test tone. Check which speaker you hear it from.')});
+navigator.mediaDevices?.addEventListener('devicechange',async()=>{if(!liveStream)return;const request=liveRequest;try{const devices=await navigator.mediaDevices.enumerateDevices();if(request!==liveRequest||!liveStream)return;const track=liveStream.getAudioTracks()[0],id=track.getSettings().deviceId;if(!devices.some(device=>device.kind==='audioinput'&&device.deviceId===id)||externalMic.test(track.label)){endLive();$('mic-status').textContent='Microphone devices changed. Live audio stopped; check and reselect the device microphone.'}}catch{if(request===liveRequest){endLive();$('mic-status').textContent='Could not verify the microphone after a device change. Find the microphone again.'}}});
+
 let libraryAudio=null,libraryRequest=0,libraryPlayRequest=0,libraryEntries=[],selectedCategory='All',playingLibraryId=null;
 function markLibraryPlaying(){document.querySelectorAll('.library-play').forEach(button=>{const playing=button.dataset.clipId===playingLibraryId;button.classList.toggle('playing',playing);button.setAttribute('aria-pressed',String(playing));button.querySelector('.play-symbol').textContent=playing?'■':'▶'})}
 function stopPreview(){++libraryPlayRequest;if(libraryAudio){libraryAudio.pause();libraryAudio.removeAttribute('src');libraryAudio.load();libraryAudio=null}playingLibraryId=null;markLibraryPlaying();$('library-playing').textContent='Choose a sound below'}
@@ -44,5 +91,5 @@ action('builtin-library',loadCatalog);
 function blobData(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)})}
 action('export',async()=>{const data={version:1,clips:await Promise.all(clips.map(async c=>c?{name:c.name,data:await blobData(c.blob)}:null))};const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='the-well-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);status('Backup exported. Keep it somewhere safe.')});
 $('restore').onchange=async()=>{try{const file=$('restore').files[0];if(!file)return;if(file.size>400*1024*1024)throw Error('Backup is too large.');const data=JSON.parse(await file.text());if(data.version!==1||!Array.isArray(data.clips)||data.clips.length!==12)throw Error('Invalid soundboard backup.');const restored=await Promise.all(data.clips.map(async c=>{if(c===null)return null;if(typeof c.name!=='string'||typeof c.data!=='string'||!/^data:audio\/[^;,]+;base64,/.test(c.data))throw Error('Invalid audio in backup.');const blob=await(await fetch(c.data)).blob();if(blob.size>25*1024*1024)throw Error('Backup clip exceeds 25 MB.');return {name:c.name.slice(0,40),blob}}));if(!confirm('Replace all 12 buttons with this backup?'))return;await transact('readwrite',s=>{s.clear();restored.forEach((c,i)=>{if(c)s.put(c,i)})});clips=restored;render();status('Backup restored.')}catch(e){status(`Restore failed: ${e.message}`)}};
-document.addEventListener('visibilitychange',()=>{if(document.hidden){endLive();if(recorder?.state==='recording')recorder.stop()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){++micDetectionRequest;endLive();if(recorder?.state==='recording')recorder.stop()}});
 (async()=>{render();try{db=await database();await new Promise((resolve,reject)=>{const r=db.transaction('clips').objectStore('clips').openCursor();r.onsuccess=()=>{const cursor=r.result;if(cursor){if(cursor.key>=0&&cursor.key<12)clips[cursor.key]=cursor.value;cursor.continue()}else resolve()};r.onerror=()=>reject(r.error)});render()}catch(e){status('Local storage unavailable. Playback works, but saving needs browser storage.');['save','clear','restore'].forEach(id=>$(id).disabled=true)}await loadCatalog();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>status('Offline installation unavailable. Use HTTPS.'))})();

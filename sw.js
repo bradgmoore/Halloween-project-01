@@ -1,5 +1,5 @@
-const CACHE='the-well-v3';
-const ASSETS=['./','./index.html','./style.css','./app.js','./manifest.webmanifest','./icon.svg','./library.json'];
+const CACHE='the-well-v4';
+const ASSETS=['./','./index.html','./style.css','./app.js','./voice-effects.js','./voice-processor.js','./manifest.webmanifest','./icon.svg','./library.json'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 async function audioResponse(request){
