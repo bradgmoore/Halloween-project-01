@@ -1,6 +1,6 @@
-# The Well · Halloween soundboard
+# Ring for Candy · Halloween soundboard
 
-An installable mobile web soundboard for an iPhone controlling a Halloween statue. Original dark well / haunted television styling inspired by the requested atmosphere; no film audio or artwork is bundled. The Halloween library includes 64 original procedural audio compositions released under CC0. These are synthesized audio, not human voice recordings. The twelve initial buttons play synthesized demo tones. Replace these with your own recordings or licensed audio.
+An installable mobile web soundboard for an iPhone controlling a Halloween statue. Photo-inspired ghoulish cartoon styling for the doorbell statue and balcony candy drop; no film audio or artwork is bundled. The Halloween library includes 64 original procedural audio compositions released under CC0. These are synthesized audio, not human voice recordings. The twelve initial buttons play synthesized demo tones. Replace these with your own recordings or licensed audio.
 
 ## Run locally
 
@@ -65,3 +65,9 @@ Browser checks exercise the 64 audio files (non-silent and decodable), eight cat
 See [CODEX_PROMPT.md](CODEX_PROMPT.md) for the reusable build brief.
 
 To rerun the live tests, serve the repository locally, make Playwright and Chromium available to Node, and run `WELL_TEST_URL=http://localhost:8000 node tests/live-voice.cjs`. `CHROMIUM_PATH` can select an alternative Chromium executable. These tests use generated fake audio and browser input mocks; they do not test Bluetooth hardware.
+
+## Ring for Candy theme
+
+The name plays on the haunted girl and the doorbell visitors ring before candy is lowered from the balcony. The illustration in `assets/ring-for-candy.png` was generated from the user's statue photo and includes the tuxedo cat, glowing bell and rope-lowered candy bucket. It appears as the main artwork and a subdued page wallpaper. The source personal photo is not published. The dark panels keep controls readable; the phone navigation exposes all four tabs. No doorbell hardware control is implemented.
+
+App names, colours and icons have been updated while retaining the existing IndexedDB name and storage keys to preserve custom recordings and assignments. The service worker caches the illustration for offline use.
