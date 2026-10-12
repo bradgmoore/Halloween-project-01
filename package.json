@@ -1,0 +1,7 @@
+{
+  "name": "ring-for-candy",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {"test": "node tests/run.cjs"},
+  "devDependencies": {"playwright": "1.62.1"}
+}

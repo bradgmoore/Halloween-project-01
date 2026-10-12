@@ -52,6 +52,8 @@ for group,(category,titles) in enumerate(GROUPS.items()):
   with tempfile.NamedTemporaryFile(suffix='.wav') as wav:
    write(wav.name,RATE,(x*32767).astype(np.int16));subprocess.run(['ffmpeg','-v','error','-nostdin','-y','-i',wav.name,'-codec:a','libmp3lame','-q:a','5',str(out/filename)],check=True)
   clips.append({'id':f'{group+1}-{i+1}','title':title,'category':category,'url':'audio/spooky/'+filename,'duration':duration,'creator':'Ring for Candy · original procedural audio','license':'CC0 1.0','description':'Original synthesized Halloween clip; no human voice recording.'})
+existing=json.loads(Path('library.json').read_text()) if Path('library.json').exists() else {'clips':[]}
+clips += [clip for clip in existing['clips'] if str(clip.get('id','')).startswith('voice-')]
 Path('library.json').write_text(json.dumps({'title':'Ring for Candy Halloween library','clips':clips},indent=2)+'\n')
 (out/'CREDITS.md').write_text('''# Ring for Candy Halloween library\n\n64 original procedural audio compositions generated with tools/generate_library.py. No third-party recordings, film samples, or human voice recordings are used. Ghost/creature/voice descriptions refer to synthesized tones and textures. This is not a third-party hosted sound archive.\n\nThe generated audio is offered under CC0 1.0 Universal for free reuse: https://creativecommons.org/publicdomain/zero/1.0/\n\nSee ../LICENSE-CC0.txt for the legal text.\n''')
 print(f'Generated {len(clips)} clips.')
