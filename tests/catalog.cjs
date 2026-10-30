@@ -28,4 +28,4 @@ const clips=[
  }
  const context=await browser.newContext({serviceWorkers:'block'});await context.addInitScript(()=>{indexedDB.open=()=>{throw Error('Storage unavailable')}});const page=await context.newPage();await page.route('**/library.json',route=>route.fulfill({json:{clips}}));await page.goto(base);await page.waitForFunction(()=>document.querySelectorAll('.library-play').length===5);await page.getByRole('button',{name:'Play Test effect one',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#library-playing').textContent==='Playing: Test effect one');await page.locator('#stop').click();await context.close();
  console.log('PASS: first two custom sounds retained byte-for-byte; other ten hidden with data preserved; every catalogue track is a Soundpad Play button; no external links/navigation; playback/toggle/loop/search/party/mobile layout and storage-independent playback. Catalogue entries here are test fixtures, not provider imports.');
-}finally{await browser.close()}})().catch(error=>{console.error(error);process.exit(1)});
+}finally{await browser.close()}})().catch(require('./report-error.cjs'));

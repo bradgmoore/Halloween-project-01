@@ -31,4 +31,4 @@ const fixture=require('./audio-fixture.cjs'),base=process.env.WELL_TEST_URL;
   assert.deepEqual(errors,[]);await context.close();
  }
  console.log('PASS: live and beta saved sounds produce measured audio even when the mic/Web Audio output fails; native playback, overlap, volume, Stop cleanup, speaker test, offline playback and Safari-style audio range requests.');
-}finally{await browser.close()}})().catch(error=>{console.error(error);process.exit(1)});
+}finally{await browser.close()}})().catch(require('./report-error.cjs'));

@@ -15,4 +15,4 @@ try{
  assert.deepEqual(errors,[]);console.log('PASS: beta/live database and settings isolation, archived take/keeper/assignment, baseline save/reset/restore preserving recordings, preview Stop, exported bundle import and deduplication on a separate device profile, phone layout.');await second.close();
  assert.equal(JSON.parse(fs.readFileSync(path.resolve(__dirname,'../beta/SNAPSHOT.json'))).source_commit,'c6b94ee1a8c6558787089e0b47cea23a4d732323');
 }finally{await browser.close();fs.rmSync(directory,{recursive:true,force:true})}
-})().catch(error=>{console.error(error);process.exit(1)});
+})().catch(require('./report-error.cjs'));
