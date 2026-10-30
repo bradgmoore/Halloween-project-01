@@ -2,13 +2,13 @@
 
 A Halloween doorbell soundboard for **one iPhone paired directly to a Bluetooth speaker**. The photo-inspired girl, cat and candy-drop artwork remains the theme.
 
-## Soundpad · 3.2.0
+## Soundpad · 3.2.1
 
 The Soundpad has the first **two custom buttons**, followed by one direct Play button for every published or locally added audio track. There is no separate library tab and no provider website link in the app. Playback stays on this page. Sound effects and music share the same button grid; music can loop. Search filters the tracks while retaining the two custom buttons. Party mode opens the Soundpad.
 
 The existing device database and its blobs are preserved. Buttons 3–12 are retired from the interface; their saved audio remains in the database and legacy setup exports to avoid deleting recordings. Editing and beta inbox assignment now target only buttons 1–2. Record & assign also retains optional local audio-file import; imported files get their own Soundpad buttons rather than replacing the two custom recordings.
 
-Saved files and the speaker test use native inline audio playback, started directly by the tap. They do not depend on microphone permission, an AudioContext or the live microphone output stream. The toolbar and footer show **3.2.0**. On iPhone, hardware volume buttons control speaker level; iOS may ignore programmatic media volume.
+Saved files and the speaker test use native inline audio playback, started directly by the tap. They do not depend on microphone permission, an AudioContext or the live microphone output stream. The toolbar and footer show **3.2.1**. On iPhone, hardware volume buttons control speaker level; iOS may ignore programmatic media volume.
 
 **Twenty real Halloween recordings are included.** A fresh browser sees twenty Play buttons after the two custom buttons: witch cackle, three screams, three zombie voices, monster/ghost groans, a roar, creepy breathing, haunted stairs, knocking, doors, creaks and thumps. No local upload or provider navigation is required.
 
@@ -17,6 +17,10 @@ The recordings are by **bart**, from [25 spooky sound effects on OpenGameArt.org
 The twenty MP3s total about 1.8 MB and are shared by production and beta. The service worker saves the full published collection during installation, with separate production/beta media caches. Published tracks also play when browser storage is unavailable, while online. Local imports remain private in IndexedDB and are merged with the published tracks. They are not included in custom-button setup exports; keep the original files as backup. Each local import is limited to 25 MB.
 
 The final scope is twenty Halloween effects, rather than every result from the original providers. Pixabay and Epidemic Sound imports remain at zero: the blocked Pixabay file was not retrieved and no Epidemic subscription was purchased. This release supplies hosting-permitted OpenGameArt recordings instead.
+
+The twenty sound buttons are bundled with the app and render immediately, before IndexedDB, service-worker registration or the network catalogue responds. Versioned catalogue requests bypass stale empty responses, and the bundle remains available if a request fails. Existing saved recordings restore independently without changing their database or clearing data.
+
+If an existing install still shows only two buttons, open [the direct Soundpad](soundboard.html?v=3.2.1). It uses the same origin and recording storage. The [update helper](update.html?v=3.2.1) can activate the new worker in place; it never clears IndexedDB or localStorage or unregisters unrelated workers. Startup tests reproduce stalled browser systems, an empty cached catalogue and an older two-button worker, and check recording byte preservation during recovery.
 
 ## iPhone speaking
 
@@ -33,7 +37,7 @@ Release, pointer cancellation, focus loss, hiding the page, input loss and Stop 
 
 Existing custom recordings remain stored, with the first two assignments shown on the Soundpad. Recording/upload, voice filters, preview, complete pad setup export/share/restore and legacy backups remain. Clip recordings are limited to 25 MB and three minutes. Original browser data and downloads should be backed up separately.
 
-The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.2.0.
+The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.2.1.
 
 There is no phone-to-tablet relay and no remote microphone dependency. Secure admin login and automatic cloud submissions remain unconfigured; the local owner tools are not authentication.
 

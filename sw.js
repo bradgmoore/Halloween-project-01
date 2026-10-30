@@ -1,10 +1,11 @@
-importScripts('./cache-config.js?v=3.2.0');
-const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v10';
-const ASSETS=['./','./index.html','./style.css?v=3.2.0','./app.js?v=3.2.0','./iphone-audio.js?v=3.2.0','./microphone.js?v=3.2.0','./cache-config.js?v=3.2.0','./voice-effects.js?v=3.2.0','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./audio/CREDITS.md','./audio/imported/halloween/CREDITS.md'];
+importScripts('./cache-config.js?v=3.2.1');
+const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v11';
+const ASSETS=['./','./index.html','./style.css?v=3.2.1','./app.js?v=3.2.1','./iphone-audio.js?v=3.2.1','./microphone.js?v=3.2.1','./cache-config.js?v=3.2.1','./voice-effects.js?v=3.2.1','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./audio/CREDITS.md','./audio/imported/halloween/CREDITS.md'];
 const LIBRARY_URL=new URL('./library.json',self.location.href);
+const FRESH_LIBRARY_URL=new URL(LIBRARY_URL);FRESH_LIBRARY_URL.searchParams.set('v','3.2.1');
 const PUBLISHED_AUDIO_PATH=new URL('./audio/imported/halloween/',self.location.href).pathname;
 self.addEventListener('install',event=>event.waitUntil((async()=>{
- const response=await fetch(new Request(LIBRARY_URL.href,{cache:'no-store'}));
+ const response=await fetch(new Request(FRESH_LIBRARY_URL.href,{cache:'no-store'}));
  if(!response.ok)throw Error('Published audio catalogue could not load.');
  const catalog=await response.clone().json();
  if(!Array.isArray(catalog.clips)||!catalog.clips.length)throw Error('Published audio catalogue is empty or invalid.');
@@ -53,6 +54,13 @@ self.addEventListener('fetch',event=>{
   if(request.method!=='GET'||url.origin!==self.location.origin)return;
   if((url.pathname.includes('/audio/')&&url.pathname.endsWith('.mp3'))||url.pathname.endsWith('/assets/speaker-check.wav')){
     event.respondWith(audioResponse(request).catch(()=>new Response('Audio is not cached. Reconnect to play this clip.',{status:503})));return;
+  }
+  if(url.pathname===LIBRARY_URL.pathname){
+    event.respondWith((async()=>{
+      const cache=await caches.open(SHELL_CACHE);
+      try{const response=await fetch(new Request(FRESH_LIBRARY_URL.href,{cache:'no-store'}));if(!response.ok)throw Error('Catalogue unavailable');await cache.put(LIBRARY_URL.href,response.clone());return response}
+      catch{return await cache.match(LIBRARY_URL.href)||new Response('Catalogue unavailable.',{status:503})}
+    })());return;
   }
   event.respondWith((async()=>{
     const cache=await caches.open(SHELL_CACHE);
