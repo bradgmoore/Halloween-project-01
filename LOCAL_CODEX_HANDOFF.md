@@ -1,5 +1,7 @@
 # Local Codex handoff: finish the Ring for Candy audio catalogue
 
+> **Continuation update, 31 October 2026:** the user changed the scope to **20 Halloween sounds** and requested completed updates be pushed automatically. Version 3.2.0 now contains twenty actual recordings from bart's OpenGameArt spooky pack under CC BY 3.0, shared by production and beta. See `README.md`, the populated manifests, and `audio/imported/halloween/CREDITS.md` for current state, provenance and exact inventory. The blocked Pixabay file was not retrieved; Pixabay/Epidemic counts remain zero. The original handoff below records the earlier scope and cloud state and is retained as history.
+
 Exported 31 October 2026, Australia/Sydney.
 
 Open the repository in local Codex and give it this entire file. This is a continuation of an existing application, not a new build or a cloud-environment onboarding task.

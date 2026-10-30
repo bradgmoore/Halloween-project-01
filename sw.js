@@ -1,7 +1,25 @@
-importScripts('./cache-config.js?v=3.1.0');
-const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v9';
-const ASSETS=['./','./index.html','./style.css?v=3.1.0','./app.js?v=3.1.0','./iphone-audio.js?v=3.1.0','./microphone.js?v=3.1.0','./cache-config.js?v=3.1.0','./voice-effects.js?v=3.1.0','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./library.json','./audio/CREDITS.md'];
-self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL_CACHE).then(cache=>cache.addAll(ASSETS))));
+importScripts('./cache-config.js?v=3.2.0');
+const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v10';
+const ASSETS=['./','./index.html','./style.css?v=3.2.0','./app.js?v=3.2.0','./iphone-audio.js?v=3.2.0','./microphone.js?v=3.2.0','./cache-config.js?v=3.2.0','./voice-effects.js?v=3.2.0','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./audio/CREDITS.md','./audio/imported/halloween/CREDITS.md'];
+const LIBRARY_URL=new URL('./library.json',self.location.href);
+const PUBLISHED_AUDIO_PATH=new URL('./audio/imported/halloween/',self.location.href).pathname;
+self.addEventListener('install',event=>event.waitUntil((async()=>{
+ const response=await fetch(new Request(LIBRARY_URL.href,{cache:'no-store'}));
+ if(!response.ok)throw Error('Published audio catalogue could not load.');
+ const catalog=await response.clone().json();
+ if(!Array.isArray(catalog.clips)||!catalog.clips.length)throw Error('Published audio catalogue is empty or invalid.');
+ const audioURLs=catalog.clips.map(clip=>{
+  if(typeof clip?.url!=='string'||!clip.url.trim())throw Error('Published audio catalogue has an invalid URL.');
+  const url=new URL(clip.url,LIBRARY_URL);
+  if(url.origin!==self.location.origin||!url.pathname.startsWith(PUBLISHED_AUDIO_PATH)||!url.pathname.endsWith('.mp3'))throw Error('Published audio must be local Halloween MP3s.');
+  return url.href;
+ });
+ const shell=await caches.open(SHELL_CACHE);
+ await shell.addAll(ASSETS);
+ await shell.put(LIBRARY_URL.href,response);
+ const media=await caches.open(APP_MEDIA_CACHE);
+ await media.addAll([...new Set(audioURLs)].map(url=>new Request(url,{cache:'reload'})));
+})()));
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE')self.skipWaiting()});
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
  const media=await caches.open(APP_MEDIA_CACHE),scope=new URL('./',self.location.href).pathname;

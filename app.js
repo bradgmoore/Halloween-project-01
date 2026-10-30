@@ -145,7 +145,16 @@ async function requestWakeLock(){try{if(party&&navigator.wakeLock&&!document.hid
 function setParty(value){party=value;document.body.classList.toggle('party-mode',party);$('party-mode').textContent=party?'Owner controls':'Party mode';document.querySelector('[data-tab="studio"]').hidden=party;const url=new URL(location.href);if(party)url.searchParams.set('mode','party');else url.searchParams.delete('mode');history.replaceState(null,'',url);if(party){tab('pads');window.scrollTo(0,0);requestWakeLock()}else{wakeLock?.release();wakeLock=null}}
 action('party-mode',()=>{stopAll();if(party&&!confirm('Leave guest mode and show owner editing controls?'))return;setParty(!party)});
 async function mediaCache(){if(!('caches'in window))throw Error('Offline downloads require HTTPS and browser cache support.');return caches.open(APP_MEDIA_CACHE)}
-async function offlineReadiness(){$('offline-status').textContent='Recordings and added files stay on this device. Online audio needs an internet connection.'}
+async function offlineReadiness(){
+ const note='Recordings and added files stay on this device.';
+ try{
+  const published=libraryEntries.filter(clip=>clip.id.startsWith('published:'));
+  if(!published.length){$('offline-status').textContent=note;return}
+  const cached=new Set((await(await mediaCache()).keys()).map(request=>request.url));
+  const ready=published.filter(clip=>cached.has(new URL(clip.url,location.href).href)).length;
+  $('offline-status').textContent=`${note} ${ready} of ${published.length} Halloween sounds ready offline.${ready<published.length?' Stay online while the app installs, then refresh this list.':''}`;
+ }catch{$('offline-status').textContent=`${note} Offline sound availability could not be checked in this browser.`}
+}
 
 function blobData(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(reader.error);reader.readAsDataURL(blob)})}
 async function setupFile(){const data={version:2,name:'Ring for Candy setup',clips:await Promise.all(clips.map(async clip=>clip?{name:clip.name,data:await blobData(clip.blob)}:null)),favorites:[...favorites],recent,scene:sceneSettings,masterVolume:Number($('master-volume').value)};return new File([JSON.stringify(data)],'ring-for-candy-setup.json',{type:'application/json'})}

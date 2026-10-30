@@ -7,12 +7,12 @@ tags:
   - ring-for-candy
   - codex
   - project-progress
-status: audio-catalogue-incomplete
+status: twenty-halloween-sounds-implemented
 ---
 
 # Ring for Candy — progress record
 
-> **Critical outstanding work:** the app contains **zero imported Pixabay or Epidemic Sound tracks**. The audio catalogue is unfinished. Interface work and tests using audio fixtures do not complete that feature.
+> **Local continuation, 31 October 2026:** version 3.2.0 implements the user's final request for **20 Halloween sounds** using actual bart/OpenGameArt recordings under CC BY 3.0. Production and beta manifests now contain twenty hosted tracks. See `README.md` and `audio/imported/halloween/CREDITS.md` for the current scope, import inventory and validation. No blocked Pixabay file was retrieved and no Epidemic subscription was purchased. The cloud progress record below is historical; its empty-catalogue status predates this continuation.
 
 ## Obsidian transfer status
 

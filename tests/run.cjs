@@ -6,7 +6,7 @@ const server=http.createServer((request,response)=>{
  fs.readFile(file,(error,body)=>{if(error){response.writeHead(404);response.end()}else{response.writeHead(200,{'content-type':types[path.extname(file)]||'application/octet-stream','cache-control':'no-cache'});response.end(body)}})
 });
 server.listen(0,'127.0.0.1',()=>{
- const scripts=['catalog.cjs','playback.cjs','e2e.cjs','beta.cjs'];
+ const scripts=['published-assets.cjs','published-playback.cjs','catalog.cjs','playback.cjs','e2e.cjs','beta.cjs'];
  function next(){const script=scripts.shift();if(!script)return server.close(()=>process.exit(0));const child=spawn(process.execPath,[path.join(__dirname,script)],{stdio:'inherit',env:{...process.env,WELL_TEST_URL:`http://127.0.0.1:${server.address().port}`}});child.on('exit',code=>{if(code)server.close(()=>process.exit(code));else next()});child.on('error',error=>{console.error(error);server.close(()=>process.exit(1))})}
  next();
 });
