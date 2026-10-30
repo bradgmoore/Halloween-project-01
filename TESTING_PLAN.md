@@ -17,15 +17,15 @@ Browser storage is not a durable backup. Each tester exports and sends clips bef
 
 ## Tester handout
 
-Share `/beta/tester-guide.html` together with the beta URL. Testers use their own phones/tablets. They enter a nickname, name and record short original clips, mark good takes Keep, send an export, and report device/browser and any playback or microphone problem. No automatic recording upload occurs. Only the Lenovo is paired to the event speaker on the night.
+Share `/beta/tester-guide.html` together with the beta URL. Testers use their own phones/tablets. They enter a nickname, name and record short original clips, mark good takes Keep, send an export, and report device/browser and any playback or microphone problem. No automatic recording upload occurs. The event iPhone is paired directly to the Bluetooth speaker.
 
 ## Owner preparation before Halloween
 
-1. Export the existing live setup before making changes on the Lenovo.
+1. Export the existing live setup before making changes on the event iPhone.
 2. Receive each tester's bundle, confirm receipt and keep the original file outside browser storage.
 3. Import bundles into the beta Recording inbox. Preview, mark Keep and export all keepers.
 4. Assign approved takes to the desired twelve buttons in the beta. Save the resulting starting setup and export the complete setup JSON.
-5. Restore that complete setup into the live site on the Lenovo. Download the library for offline use and test speaker playback and PTT microphone routing on that actual device.
+5. Restore that complete setup into the live site on the event iPhone. Download the library for offline use and test speaker playback and PTT microphone routing on that actual device.
 6. Keep the final setup JSON and keeper bundle separately. If buttons get changed, restore the final setup file; the source tester files and keeper bundle remain available.
 
 A local reset controls only the browser where it is invoked. It cannot reset another tester's device. Baseline restoration also restores favorites/history/scene/master volume saved with that baseline; clean reset restores defaults. Recordings remain separate in both cases.
@@ -38,7 +38,7 @@ Recommendation: Supabase Auth plus a private Storage bucket and database policie
 - Testers get individual authenticated or anonymous identities and explicitly submit chosen clips. Rate and size limits apply; recordings are not exposed publicly.
 - Testers can submit/read their own clips. Only the owner can review all submissions, approve/tag keepers or publish an event setup. Private audio is accessed through short-lived authorised URLs.
 - Store `recordings`, `event_setups`, `button_assignments` and `setup_versions` separately. Reset restores assignments from a chosen setup version and never deletes recording objects. Rejected clips can be reviewed later; deletion is a separate explicit operation.
-- The Lenovo loads the approved event setup, then downloads required audio for offline use. A tester cannot reset the event setup or change admin roles.
+- The event iPhone loads the approved event setup, then downloads required audio for offline use. A tester cannot reset the event setup or change admin roles.
 - Keep/export backups before the event even with cloud storage.
 
 Required outside setup: a Supabase project under the owner's account, its public project URL and publishable frontend key, the owner's login email, storage limits and permitted site URLs. Private service-role keys must never be put in GitHub Pages or chat. No backend project or secure login is configured yet; the beta's “Owner reset tools” are clearly labeled local controls, not a security boundary.
@@ -51,6 +51,6 @@ Suggested folders on the organiser's Windows machine:
 
 - `Halloween/Tester originals/` — received exports, kept unchanged.
 - `Halloween/Approved clips/` — keeper exports and individual audio downloads.
-- `Halloween/Final Lenovo setup/` — dated final setup JSON and a copy of the tester handout.
+- `Halloween/Final iPhone setup/` — dated final setup JSON and a copy of the tester handout.
 
 Use dated filenames when saving successive event setups. Restoring a button setup should never require deleting any of these folders.

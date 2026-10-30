@@ -1,8 +1,8 @@
-/* Device microphone selection shared by push-to-talk and the recording studio. */
+/* Prefer a local input; keep Safari's automatic route available when input IDs are hidden. */
 class DeviceMicrophone {
   constructor(select,report){this.select=select;this.report=report;this.generation=0;this.external=/bluetooth|airpods|headset|hands.?free|earbuds|wireless|usb/i;this.internal=/built[ -]?in|internal|microphone array|iphone|ipad|macbook|pixel|tablet|lenovo|integrated/i;}
   cancel(){this.generation++}
-  supported(){if(!navigator.mediaDevices?.getUserMedia||!navigator.mediaDevices?.enumerateDevices)throw Error('Microphone access needs HTTPS and a recent browser.');if(!navigator.mediaDevices.getSupportedConstraints().deviceId)throw Error('This browser cannot select a microphone. Try Chrome on the tablet.');}
+  supported(){if(!navigator.mediaDevices?.getUserMedia||!navigator.mediaDevices?.enumerateDevices)throw Error('Microphone access needs HTTPS and Safari microphone permission.');}
   isLocal(device){return this.internal.test(device.label)&&!this.external.test(device.label)}
   async discover(){
     this.supported();const request=++this.generation;let probe;
@@ -11,24 +11,29 @@ class DeviceMicrophone {
       if(!all.some(d=>d.kind==='audioinput'&&d.label)){probe=await navigator.mediaDevices.getUserMedia({audio:true});all=await navigator.mediaDevices.enumerateDevices()}
       if(request!==this.generation)return false;
       const inputs=all.filter(d=>d.kind==='audioinput'&&d.deviceId);const previous=this.select.value;let saved;try{saved=localStorage.getItem('beta:well-device-mic')}catch{}
-      this.select.replaceChildren(new Option('Choose a microphone on this device',''));
-      for(const input of inputs){const option=new Option(input.label||'Unnamed microphone',input.deviceId);option.disabled=!input.label||this.external.test(input.label);this.select.append(option)}
-      const eligible=inputs.filter(d=>d.label&&!this.external.test(d.label));
+      this.select.replaceChildren(new Option('Device microphone · automatic',''));
+      for(const input of inputs){const option=new Option(input.label||'Unnamed microphone',input.deviceId);option.disabled=this.external.test(input.label);this.select.append(option)}
+      const eligible=inputs.filter(d=>!this.external.test(d.label));
       const local=eligible.find(d=>this.isLocal(d)&&!['default','communications'].includes(d.deviceId))||eligible.find(d=>this.isLocal(d));
       const remembered=eligible.find(d=>d.deviceId===(previous||saved)&&!['default','communications'].includes(d.deviceId));
       const selected=local||remembered;if(selected)this.select.value=selected.deviceId;
-      this.report(selected?`${this.isLocal(selected)?'Built-in mic':'Selected input—check this is the device mic'}: ${selected.label}`:'No built-in mic identified. Choose a labeled device microphone; Bluetooth inputs are excluded.');return true;
+      this.report(selected?`${this.isLocal(selected)?'Built-in mic':'Selected input'}: ${selected.label||'Unnamed microphone'}`:'Automatic device microphone. Safari may hide input names; the active input will be shown when you hold to talk.');return true;
     }finally{probe?.getTracks().forEach(track=>track.stop())}
   }
   async acquire(valid){
-    this.supported();if(!this.select.value)await this.discover();if(!valid())return null;
-    const id=this.select.value;if(!id)throw Error('Choose the device microphone first.');
-    if(this.external.test(this.select.selectedOptions[0]?.textContent||''))throw Error('Select a microphone on the phone or tablet.');
-    const stream=await navigator.mediaDevices.getUserMedia({audio:{deviceId:{exact:id},echoCancellation:true,noiseSuppression:true,autoGainControl:false}});
+    this.supported();if(!valid())return null;const id=this.select.value;
+    if(this.external.test(this.select.selectedOptions[0]?.textContent||''))throw Error('Select the iPhone microphone.');
+    const constraints={echoCancellation:true,noiseSuppression:true,autoGainControl:false};
+    if(id){if(!navigator.mediaDevices.getSupportedConstraints().deviceId)throw Error('Select automatic input; this browser hides microphone IDs.');constraints.deviceId={exact:id}}
+    const stream=await navigator.mediaDevices.getUserMedia({audio:constraints});
     if(!valid()){stream.getTracks().forEach(t=>t.stop());return null}
     const track=stream.getAudioTracks()[0],settings=track?.getSettings();
-    if(!settings?.deviceId||settings.deviceId!==id||this.external.test(track.label)){stream.getTracks().forEach(t=>t.stop());throw Error('Browser did not confirm the selected microphone. Capture stopped.');}
-    this.report(`Active input: ${track.label||this.select.selectedOptions[0].textContent} · browser identity confirmed`);return stream;
+    const alias=['default','communications'].includes(id);
+    if(!track||this.external.test(track.label)||(id&&!alias&&settings?.deviceId&&settings.deviceId!==id)){
+      stream.getTracks().forEach(t=>t.stop());throw Error('Browser did not confirm the selected iPhone microphone. Capture stopped.');
+    }
+    const confirmation=id&&settings?.deviceId===id?'selected input confirmed':settings?.deviceId?'automatic input reported':'Safari has not exposed an input ID';
+    this.report(`Active input: ${track.label||'Device microphone'} · ${confirmation}`);return stream;
   }
   remember(){try{localStorage.setItem('beta:well-device-mic',this.select.value)}catch{}}
 }

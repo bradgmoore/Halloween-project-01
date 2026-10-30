@@ -1,66 +1,50 @@
-# Ring for Candy · Halloween soundboard
+# Ring for Candy · iPhone soundboard
 
-Ring the bell. Candy descends. A static mobile web app for the doorbell statue, balcony candy drop, and Bluetooth speaker. Install it on an iPhone or Lenovo tablet from the browser. No backend, account, paid API, or runtime dependencies are required.
+A Halloween doorbell soundboard for **one iPhone paired directly to a Bluetooth speaker**. The photo-inspired girl, cat and candy-drop artwork remains the theme.
 
-## Party workflow
+## Simple audio library
 
-1. Connect the Bluetooth speaker in the device’s settings, open the app, and test its output.
-2. Use **Download all for offline** in Halloween library. Wait for **Ready offline: all 96 sounds saved**.
-3. Tap **Party mode**. Guests see larger sound controls and the library first; owner editing is hidden. A supported browser requests a screen wake lock. Owner controls returns after confirmation. This is an accidental-edit guard, not authentication.
-4. Star favorite sounds or use Recently played. Search and category filters still work.
-5. Optionally start a looping atmosphere in Haunting scenes. The background automatically quiets while another sound plays or while the mic is open.
-6. Use **Stop all audio** to stop foreground audio, atmosphere, previews, recording and pending capture/playback.
+**Sounds & music** has two sections:
 
-A direct guest URL is the app address followed by `?mode=party`. Offline navigation supports this link.
+- **Sound effects** opens the user's [Pixabay Halloween search](https://pixabay.com/sound-effects/search/halloween/). Play on Pixabay, or download selected clips and use **Add sound effect files**.
+- **Music** opens the user's [Epidemic Sound Halloween Town collection](https://www.epidemicsound.com/music/themes/horror-thriller/halloween-town/). Listen on the provider site, or add downloaded tracks when your licence covers their use. Music can loop.
 
-## Push-to-talk only
+Added files are stored privately in this browser's IndexedDB and work offline after the application shell has been cached. Multiple audio files can be added at once. Search finds added files; Remove deletes only the library copy. The public site does not upload or redistribute those files. Imported library files are not included in the twelve-pad setup export: retain the original downloads as backup. Each file is limited to 25 MB; MP3/AAC are suitable for longer music tracks.
 
-In **Push to talk**, tap **Find device microphone**, grant permission if needed, and check the selected input. A recognizable built-in device microphone is preferred. Bluetooth/headset/USB inputs are excluded; ambiguous labeled device inputs can be selected manually. The app displays the selected and active input. The preference is specific to that browser/device and is not copied in setup files.
+The generated catalogue, synthetic demo pad tones, multi-category lists and scene controls have been removed from the offered interface. Empty custom pads stay silent and explain how to add audio. Historical source files remain in Git for rollback, but the app does not list or automatically play them.
 
-Hold **Hold to talk** to open the mic and speak; release it to mute and close the capture. Mouse, touch/pointer, and keyboard Space/Enter holds are supported. Release, pointer cancellation, lost capture, focus loss, leaving the live tab, page hiding, device loss, or emergency Stop cancels the capture, including pending microphone permission requests. There is no latched Start/End speaking mode.
+**No provider catalogue was downloaded or embedded.** This execution environment blocks requests to Pixabay and Epidemic Sound, and a search/playlist URL is not an authorised audio API. Both provider links are real browse links, not claims of an in-app integration. We have not verified provider download/embedding terms from this environment. Do not copy an entire catalogue into the public repository without establishing redistribution rights. User-added files remain local.
 
-The app requests an exact microphone `deviceId`, checks the browser-reported result and stops if it differs or cannot be identified. The signal meter helps verify audio arrival. Natural, Witch, Zombie, Ghoul, Demon and Ghost processing runs locally using AudioWorklet. Live audio is not uploaded or recorded. Pitch processing, echoes and Bluetooth buffering add latency.
+## iPhone speaking
 
-**A browser cannot guarantee physical built-in-mic/Bluetooth-output routing on iOS or Android.** Input identity checks confirm the browser’s report, not the OS hardware route. If the meter moves but nothing comes from the speaker, use Test speaker output, adjust master/live volume and check the OS output destination. Keep the device away from the speaker and start at low volume. Test your actual phone/tablet and speaker before the event. A native audio integration or separate speaker-connected mic may be needed if the OS cannot maintain the desired route.
+1. Pair the Bluetooth speaker directly to the iPhone and open the HTTPS app in Safari.
+2. Open **Push to talk**, tap **Find device microphone**, and allow access before holding the talk button. Prefer the named iPhone/built-in input. Automatic input remains available when Safari hides input IDs.
+3. Select **Natural** first. Hold to talk; release to close the microphone. Natural uses gain/analyser nodes without loading the pitch worklet. Filter presets remain available when AudioWorklet is supported.
+4. Use **Test speaker output** and the input meter. If the meter responds but sound goes to the iPhone, select the Bluetooth speaker in Control Center while capture is active.
 
-## Custom sounds and filtered recordings
+Speaker playback, including live mic monitoring, is routed through one `playsinline` audio element fed by the processed Web Audio stream. Startup calls audio-element playback and AudioContext resume synchronously in the gesture before awaiting microphone permission. Where supported, the Audio Session API is set to `play-and-record` during capture and restored to `playback` after microphone shutdown. The input's reported identity is shown; a hidden Safari device ID alone no longer aborts a valid capture. A positively identified Bluetooth/headset mic or a reported explicit-ID mismatch still stops capture.
 
-The front page retains twelve independent programmable pads. Record & assign supports uploads, previews, naming and button assignment. Natural or filtered recordings use the same selected device microphone. Filtered recording sends processed audio to a local recording stream, not to the speaker, reducing dependence on duplex Bluetooth routing.
+Release, pointer cancellation, focus loss, hiding the page, input loss and Stop close capture and invalidate pending requests. The microphone meter distinguishes input arrival from speaker output; browser tests cannot confirm physical Bluetooth routing. AudioContext interruptions and muted input are reported. iOS ultimately controls routing and Bluetooth introduces delay. A real iPhone/speaker test is still required; this release does not claim the user's hardware has been verified.
 
-Uploads and recordings are limited to 25 MB per clip; recordings automatically finish at three minutes. Oversized takes are discarded. Files are decoded before saving/importing. Prefer MP3, WAV or AAC; microphone recording uses the browser-supported format. Browser storage retains clips across reloads but may be evicted. No clips are uploaded to GitHub or a server.
+## Custom pads, recordings and beta
 
-## Copy setup from phone to tablet
+Existing twelve-pad assignments and recordings are preserved during IndexedDB migration. Recording/upload, voice filters, preview, complete pad setup export/share/restore and legacy backups remain. Clip recordings are limited to 25 MB and three minutes. Original browser data and downloads should be backed up separately.
 
-Use **Export setup** or **Share setup to tablet** in Record & assign. A supporting browser opens the native share sheet; otherwise the app downloads a JSON file. Transfer that file to the tablet, open Record & assign there and choose Restore backup.
+The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.0.
 
-Version 2 setup files include the twelve custom clips, favorites, recently played list, scene choice/volume and master volume. They exclude microphone IDs and library cache contents. Legacy version 1 backups are supported. The full import is validated before replacing clips in one IndexedDB transaction. JSON imports are limited to 420 MB; an exported setup containing the maximum supported twelve clips fits within this allowance. Large backups can use substantial browser memory; smaller clips are preferable.
+There is no phone-to-tablet relay and no remote microphone dependency. Secure admin login and automatic cloud submissions remain unconfigured; the local owner tools are not authentication.
 
-## Halloween library and rights
+## Run and validate
 
-96 self-hosted, CC0 clips:
-
-- 64 original procedural compositions grouped into eight categories: ghosts, creatures, eerie melodies, haunted atmospheres, cursed radio, rituals, suspense, and synthesized shrieks. These are synthesized textures, not human voice recordings or film samples.
-- 32 Kenney prerecorded scare phrases: sixteen source phrases across two voices, in original and Demon-processed forms. These are spoken phrases, not recorded screams or laughter. Source revision, CC0 license and SHA-256 checksums are included in `audio/recorded/`. No unidentified third-party scream packs were imported.
-
-See [audio credits](audio/CREDITS.md). The original twelve Kenney prop sounds remain for compatibility but are not shown in the guest list. No external archive API or secret key is configured.
-
-The complete collection can be downloaded locally. Partial/cancelled downloads retain completed clips and show readiness counts. A stable cache scoped to this app preserves audio through shell updates. Legacy audio caches are migrated; unrelated same-origin caches are preserved. Browser cache eviction remains possible. The Update notice lets you stop audio and activate a new shell. Offline MP3 range responses support mobile playback.
-
-To regenerate procedural clips, install Python `numpy`, `scipy` and `ffmpeg`, then run `python3 tools/generate_library.py`. To reproduce the reviewed voice import, check out the exact pinned source revision documented in `tools/import_recorded_voices.py`, then pass its local path to that script. Hosting the generated app requires none of these tools.
-
-## Run, test and deploy
-
-Serve the files locally:
+No runtime dependencies or build step:
 
 ```sh
 python3 -m http.server 8000
 ```
 
-Microphone access needs trusted HTTPS on a physical phone/tablet; localhost is secure only on the development machine. A phone reaching a Windows LAN IP needs HTTPS. Windows can host the static files behind a trusted certificate, but GitHub Pages avoids maintaining that server.
+Use trusted HTTPS for microphone access on an iPhone. Localhost is only secure on the machine serving it.
 
-GitHub Pages is configured for **main → /(root)**. `.nojekyll` serves the static files directly. Pushing to main triggers publication. App regression checks also run on pushes and PRs through `.github/workflows/checks.yml`. Branch-based Pages publication currently runs independently of those checks; a required pre-deployment gate would require switching Pages to a reviewed Actions deployment workflow in repository settings.
-
-For regression tests:
+Regression checks:
 
 ```sh
 npm ci
@@ -68,14 +52,6 @@ npx playwright install --with-deps chromium
 npm test
 ```
 
-The runner starts its own local server. `CHROMIUM_PATH` can select an installed Chromium. Tests cover actual audio decoding, favorites/history, offline pack and ranges, scene ducking, hold/release and keyboard PTT, cancelled capture, microphone mismatch rejection, filtered recording, Stop, pending recording/playback cancellation, setup round-trip, legacy audio migration, unrelated cache preservation and phone/tablet layouts. Tests use generated fake microphone audio and mocked input identities; they do not validate physical Bluetooth devices or voice intelligibility on those devices.
+Tests cover migration of existing pads, provider URLs, separate sound/music imports, playback/looping/offline persistence, Natural without worklets, **measured non-silent live output**, Audio Session transitions, missing input IDs, explicit input mismatch, PTT release/cancellation/keyboard, recording/backup, beta inbox retention/isolation and layouts. Inputs and Audio Session are simulated; these tests are not physical iPhone/Bluetooth certification.
 
-## Artwork and data
-
-The generated cartoon illustration is inspired by the user’s statue photo and includes the tuxedo cat, glowing doorbell and rope-lowered candy bucket. The original personal photo is not published. Artwork is cached offline. No doorbell hardware automation is implemented.
-
-The existing IndexedDB name and clip keys are retained to preserve custom sounds. All local data stays in this browser until exported. GitHub serves public app files; no analytics or cloud audio-storage service is configured. The manifest supports a home-screen app. It is not a signed native iOS application.
-
-## Beta testing and recording retention
-
-`/beta/` is an isolated copy of released v2.0 with a separate local database/settings, an automatic recording inbox, Keep flags, recording import/export/sharing, per-clip assignment, saved starting setup and reset controls that preserve recordings. Live application files remain separate. Testers use their own devices; recordings reach the organiser only through exported files at this stage. See [testing plan](TESTING_PLAN.md) and the beta's mobile-friendly `tester-guide.html`. A secure backend admin login is proposed in that plan and is not yet configured.
+GitHub Pages publishes `main → /(root)`. Regression checks run independently on pushes and PRs. The service worker preserves media and unrelated caches across shell updates; imported library media is stored in IndexedDB. Use the app's update notice after publication. No API key or audio-storage service is configured. Uploaded and recorded files are not sent to GitHub.

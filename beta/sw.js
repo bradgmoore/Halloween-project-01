@@ -1,6 +1,6 @@
 importScripts('./cache-config.js');
-const SHELL_CACHE=APP_CACHE_PREFIX+'shell-beta-v1';
-const ASSETS=['./','./index.html','./style.css','./app.js','./beta-tools.js','./tester-guide.html','./microphone.js','./cache-config.js','./voice-effects.js','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./library.json','./audio/CREDITS.md'];
+const SHELL_CACHE=APP_CACHE_PREFIX+'shell-beta-v2';
+const ASSETS=['./','./index.html','./style.css','./app.js','./beta-tools.js','./tester-guide.html','./iphone-audio.js','./microphone.js','./cache-config.js','./voice-effects.js','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./library.json','./audio/CREDITS.md'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL_CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE')self.skipWaiting()});
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
