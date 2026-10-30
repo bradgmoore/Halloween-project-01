@@ -2,6 +2,10 @@
 
 A Halloween doorbell soundboard for **one iPhone paired directly to a Bluetooth speaker**. The photo-inspired girl, cat and candy-drop artwork remains the theme.
 
+## Playback hotfix · 3.0.1
+
+Saved sounds, imported effects/music and the speaker test now use native inline audio playback, started directly by the tap. They no longer depend on microphone permissions, an AudioContext or the live microphone output stream. The top **Play test sound** button plays a bundled original test tone, even when the library is empty. The toolbar and footer show **3.0.1**. iPhone hardware volume buttons control the speaker level; iOS may ignore programmatic media volume. Existing recordings and assignments are preserved.
+
 ## Simple audio library
 
 **Sounds & music** has two sections:
@@ -22,7 +26,7 @@ The generated catalogue, synthetic demo pad tones, multi-category lists and scen
 3. Select **Natural** first. Hold to talk; release to close the microphone. Natural uses gain/analyser nodes without loading the pitch worklet. Filter presets remain available when AudioWorklet is supported.
 4. Use **Test speaker output** and the input meter. If the meter responds but sound goes to the iPhone, select the Bluetooth speaker in Control Center while capture is active.
 
-Speaker playback, including live mic monitoring, is routed through one `playsinline` audio element fed by the processed Web Audio stream. Startup calls audio-element playback and AudioContext resume synchronously in the gesture before awaiting microphone permission. Where supported, the Audio Session API is set to `play-and-record` during capture and restored to `playback` after microphone shutdown. The input's reported identity is shown; a hidden Safari device ID alone no longer aborts a valid capture. A positively identified Bluetooth/headset mic or a reported explicit-ID mismatch still stops capture.
+Only live mic monitoring uses a `playsinline` audio element fed by the processed Web Audio stream. Saved clips and library files play directly through native audio elements, separately from the microphone graph. Startup calls audio-element playback and AudioContext resume synchronously in the gesture before awaiting microphone permission. Where supported, the Audio Session API is set to `play-and-record` during capture and restored to `playback` after microphone shutdown. The input's reported identity is shown; a hidden Safari device ID alone no longer aborts a valid capture. A positively identified Bluetooth/headset mic or a reported explicit-ID mismatch still stops capture.
 
 Release, pointer cancellation, focus loss, hiding the page, input loss and Stop close capture and invalidate pending requests. The microphone meter distinguishes input arrival from speaker output; browser tests cannot confirm physical Bluetooth routing. AudioContext interruptions and muted input are reported. iOS ultimately controls routing and Bluetooth introduces delay. A real iPhone/speaker test is still required; this release does not claim the user's hardware has been verified.
 
@@ -30,7 +34,7 @@ Release, pointer cancellation, focus loss, hiding the page, input loss and Stop 
 
 Existing twelve-pad assignments and recordings are preserved during IndexedDB migration. Recording/upload, voice filters, preview, complete pad setup export/share/restore and legacy backups remain. Clip recordings are limited to 25 MB and three minutes. Original browser data and downloads should be backed up separately.
 
-The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.0.
+The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.0.1.
 
 There is no phone-to-tablet relay and no remote microphone dependency. Secure admin login and automatic cloud submissions remain unconfigured; the local owner tools are not authentication.
 
@@ -52,6 +56,6 @@ npx playwright install --with-deps chromium
 npm test
 ```
 
-Tests cover migration of existing pads, provider URLs, separate sound/music imports, playback/looping/offline persistence, Natural without worklets, **measured non-silent live output**, Audio Session transitions, missing input IDs, explicit input mismatch, PTT release/cancellation/keyboard, recording/backup, beta inbox retention/isolation and layouts. Inputs and Audio Session are simulated; these tests are not physical iPhone/Bluetooth certification.
+Tests measure native file output with the microphone and live output graph deliberately unavailable, plus overlap/Stop cleanup, volume changes, the bundled speaker test and offline range requests. They also cover migration of existing pads, provider URLs, separate sound/music imports, playback/looping/offline persistence, Natural without worklets, **measured non-silent live output**, Audio Session transitions, missing input IDs, explicit input mismatch, PTT release/cancellation/keyboard, recording/backup, beta inbox retention/isolation and layouts. Inputs and Audio Session are simulated; these tests are not physical iPhone/Bluetooth certification.
 
 GitHub Pages publishes `main → /(root)`. Regression checks run independently on pushes and PRs. The service worker preserves media and unrelated caches across shell updates; imported library media is stored in IndexedDB. Use the app's update notice after publication. No API key or audio-storage service is configured. Uploaded and recorded files are not sent to GitHub.

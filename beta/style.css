@@ -39,3 +39,5 @@ input:not([type=checkbox]),select{background:#140f18;border-color:#70575c;color:
 .beta-banner{padding:14px;border:1px solid #edb16c;border-radius:10px;margin-bottom:16px;background:#403020;color:#f9e7c8;line-height:1.6}.beta-banner a{white-space:nowrap}.take-card{padding:16px;border:1px solid #70575c;border-radius:10px;margin:14px 0}.take-card p{color:#dcbba4}.take-card audio{margin:10px 0}.owner-tools{border-top:1px solid #70575c;margin-top:24px;padding-top:16px}.owner-tools summary{cursor:pointer;padding:14px 0;font-weight:bold}
 
 [hidden]{display:none!important}
+
+.release-version{font-size:12px;color:#efba84;white-space:nowrap}

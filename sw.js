@@ -1,6 +1,6 @@
-importScripts('./cache-config.js');
-const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v7';
-const ASSETS=['./','./index.html','./style.css','./app.js','./iphone-audio.js','./microphone.js','./cache-config.js','./voice-effects.js','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./library.json','./audio/CREDITS.md'];
+importScripts('./cache-config.js?v=3.0.1');
+const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v8';
+const ASSETS=['./','./index.html','./style.css?v=3.0.1','./app.js?v=3.0.1','./iphone-audio.js?v=3.0.1','./microphone.js?v=3.0.1','./cache-config.js?v=3.0.1','./voice-effects.js?v=3.0.1','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./library.json','./audio/CREDITS.md'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL_CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE')self.skipWaiting()});
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
@@ -15,7 +15,7 @@ async function audioResponse(request){
   const cache=await caches.open(APP_MEDIA_CACHE);
   const headers=new Headers(request.headers);headers.delete('range');
   const fullRequest=new Request(request,{headers});
-  let response=await cache.match(fullRequest);
+  let response=await cache.match(fullRequest)||await (await caches.open(SHELL_CACHE)).match(fullRequest);
   if(!response){response=await fetch(fullRequest);if(response.status===200)try{await cache.put(fullRequest,response.clone())}catch{/* Playback still works if storage is full. */}}
   const range=request.headers.get('range');
   if(!range||response.status!==200)return response;
@@ -33,7 +33,7 @@ async function audioResponse(request){
 self.addEventListener('fetch',event=>{
   const request=event.request,url=new URL(request.url);
   if(request.method!=='GET'||url.origin!==self.location.origin)return;
-  if(url.pathname.includes('/audio/')&&url.pathname.endsWith('.mp3')){
+  if((url.pathname.includes('/audio/')&&url.pathname.endsWith('.mp3'))||url.pathname.endsWith('/assets/speaker-check.wav')){
     event.respondWith(audioResponse(request).catch(()=>new Response('Audio is not cached. Reconnect to play this clip.',{status:503})));return;
   }
   event.respondWith((async()=>{
