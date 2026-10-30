@@ -2,22 +2,19 @@
 
 A Halloween doorbell soundboard for **one iPhone paired directly to a Bluetooth speaker**. The photo-inspired girl, cat and candy-drop artwork remains the theme.
 
-## Playback hotfix · 3.0.1
+## Soundpad · 3.1.0
 
-Saved sounds, imported effects/music and the speaker test now use native inline audio playback, started directly by the tap. They no longer depend on microphone permissions, an AudioContext or the live microphone output stream. The top **Play test sound** button plays a bundled original test tone, even when the library is empty. The toolbar and footer show **3.0.1**. iPhone hardware volume buttons control the speaker level; iOS may ignore programmatic media volume. Existing recordings and assignments are preserved.
+The Soundpad has the first **two custom buttons**, followed by one direct Play button for every published or locally added audio track. There is no separate library tab and no provider website link in the app. Playback stays on this page. Sound effects and music share the same button grid; music can loop. Search filters the tracks while retaining the two custom buttons. Party mode opens the Soundpad.
 
-## Simple audio library
+The existing device database and its blobs are preserved. Buttons 3–12 are retired from the interface; their saved audio remains in the database and legacy setup exports to avoid deleting recordings. Editing and beta inbox assignment now target only buttons 1–2. Record & assign also retains optional local audio-file import; imported files get their own Soundpad buttons rather than replacing the two custom recordings.
 
-**Sounds & music** has two sections:
+Saved files and the speaker test use native inline audio playback, started directly by the tap. They do not depend on microphone permission, an AudioContext or the live microphone output stream. The toolbar and footer show **3.1.0**. On iPhone, hardware volume buttons control speaker level; iOS may ignore programmatic media volume.
 
-- **Sound effects** opens the user's [Pixabay Halloween search](https://pixabay.com/sound-effects/search/halloween/). Play on Pixabay, or download selected clips and use **Add sound effect files**.
-- **Music** opens the user's [Epidemic Sound Halloween Town collection](https://www.epidemicsound.com/music/themes/horror-thriller/halloween-town/). Listen on the provider site, or add downloaded tracks when your licence covers their use. Music can loop.
+**Provider content remains blocked and incomplete.** The published `library.json` still contains zero provider tracks. This cloud environment's enforced network policy denies Pixabay and Epidemic Sound, so no track list, direct audio URL or provider playback terms have been verified. A domain-access draft was saved in Codex Environment settings; it has not been applied to the running environment. The app does not invent source URLs, substitute its retired generated sounds, or send users to provider websites.
 
-Added files are stored privately in this browser's IndexedDB and work offline after the application shell has been cached. Multiple audio files can be added at once. Search finds added files; Remove deletes only the library copy. The public site does not upload or redistribute those files. Imported library files are not included in the twelve-pad setup export: retain the original downloads as backup. Each file is limited to 25 MB; MP3/AAC are suitable for longer music tracks.
+Once verified track data is available, add it to `library.json` (and the beta copy) with `clips` entries containing `id`, `title`, `kind` (`effects` or `music`) and a playable HTTPS `url` or same-origin audio path. Every entry automatically becomes a Soundpad button without local assignment or import. Optional duration metadata is not required. Local imports are merged with the published entries. Published tracks can play even if browser storage is unavailable. A provider webpage URL is not itself a playable media URL; full-track availability and embedding permissions still require verification.
 
-The generated catalogue, synthetic demo pad tones, multi-category lists and scene controls have been removed from the offered interface. Empty custom pads stay silent and explain how to add audio. Historical source files remain in Git for rollback, but the app does not list or automatically play them.
-
-**No provider catalogue was downloaded or embedded.** This execution environment blocks requests to Pixabay and Epidemic Sound, and a search/playlist URL is not an authorised audio API. Both provider links are real browse links, not claims of an in-app integration. We have not verified provider download/embedding terms from this environment. Do not copy an entire catalogue into the public repository without establishing redistribution rights. User-added files remain local.
+Added files stay privately in the browser's IndexedDB and work offline after the application shell has been cached. They are not included in the custom-button setup export; keep the original files as backup. Each imported file is limited to 25 MB. No provider catalogue has been copied into this repository.
 
 ## iPhone speaking
 
@@ -32,9 +29,9 @@ Release, pointer cancellation, focus loss, hiding the page, input loss and Stop 
 
 ## Custom pads, recordings and beta
 
-Existing twelve-pad assignments and recordings are preserved during IndexedDB migration. Recording/upload, voice filters, preview, complete pad setup export/share/restore and legacy backups remain. Clip recordings are limited to 25 MB and three minutes. Original browser data and downloads should be backed up separately.
+Existing custom recordings remain stored, with the first two assignments shown on the Soundpad. Recording/upload, voice filters, preview, complete pad setup export/share/restore and legacy backups remain. Clip recordings are limited to 25 MB and three minutes. Original browser data and downloads should be backed up separately.
 
-The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.0.1.
+The beta at `/beta/` has separate storage. Its Recording inbox, Keep flags, tester bundle import/export and baseline reset tools remain. Resetting beta pads does not erase archived takes. See [testing plan](TESTING_PLAN.md). The original v2.0 source hashes in `beta/SNAPSHOT.json` remain historical provenance; both app variants have now been intentionally upgraded to v3.1.0.
 
 There is no phone-to-tablet relay and no remote microphone dependency. Secure admin login and automatic cloud submissions remain unconfigured; the local owner tools are not authentication.
 
@@ -56,6 +53,6 @@ npx playwright install --with-deps chromium
 npm test
 ```
 
-Tests measure native file output with the microphone and live output graph deliberately unavailable, plus overlap/Stop cleanup, volume changes, the bundled speaker test and offline range requests. They also cover migration of existing pads, provider URLs, separate sound/music imports, playback/looping/offline persistence, Natural without worklets, **measured non-silent live output**, Audio Session transitions, missing input IDs, explicit input mismatch, PTT release/cancellation/keyboard, recording/backup, beta inbox retention/isolation and layouts. Inputs and Audio Session are simulated; these tests are not physical iPhone/Bluetooth certification.
+Tests verify preservation of both custom recordings byte-for-byte, hiding of the ten retired custom buttons without deleting their blobs, one Soundpad button per supplied catalogue entry, no external navigation, search/party/mobile layouts and playback without local storage. Catalogue tests use labelled test fixtures, not actual provider tracks. Tests also measure native file output with the microphone and live output graph deliberately unavailable, plus overlap/Stop cleanup, volume changes, the bundled speaker test and offline range requests. They also cover migration of existing pads, published catalogue loading, sound/music imports, playback/looping/offline persistence, Natural without worklets, **measured non-silent live output**, Audio Session transitions, missing input IDs, explicit input mismatch, PTT release/cancellation/keyboard, recording/backup, beta inbox retention/isolation and layouts. Inputs and Audio Session are simulated; these tests are not physical iPhone/Bluetooth certification.
 
 GitHub Pages publishes `main → /(root)`. Regression checks run independently on pushes and PRs. The service worker preserves media and unrelated caches across shell updates; imported library media is stored in IndexedDB. Use the app's update notice after publication. No API key or audio-storage service is configured. Uploaded and recorded files are not sent to GitHub.

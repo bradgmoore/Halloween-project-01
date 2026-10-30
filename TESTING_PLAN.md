@@ -24,7 +24,7 @@ Share `/beta/tester-guide.html` together with the beta URL. Testers use their ow
 1. Export the existing live setup before making changes on the event iPhone.
 2. Receive each tester's bundle, confirm receipt and keep the original file outside browser storage.
 3. Import bundles into the beta Recording inbox. Preview, mark Keep and export all keepers.
-4. Assign approved takes to the desired twelve buttons in the beta. Save the resulting starting setup and export the complete setup JSON.
+4. Assign approved takes to the first two custom buttons in the beta. Save the resulting starting setup and export the complete setup JSON.
 5. Restore that complete setup into the live site on the event iPhone. Download the library for offline use and test speaker playback and PTT microphone routing on that actual device.
 6. Keep the final setup JSON and keeper bundle separately. If buttons get changed, restore the final setup file; the source tester files and keeper bundle remain available.
 

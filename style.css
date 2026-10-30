@@ -39,3 +39,5 @@ input:not([type=checkbox]),select{background:#140f18;border-color:#70575c;color:
 [hidden]{display:none!important}
 
 .release-version{font-size:12px;color:#efba84;white-space:nowrap}
+
+#pad-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pad{min-width:0;overflow-wrap:anywhere}.pad.library-play{align-items:stretch;margin:0;min-height:130px;gap:14px}.pad.library-play .clip-title{flex:none}.pad .play-symbol{font:inherit}.now-playing{margin-top:20px}#audio-import{margin-top:24px}#audio-import summary{cursor:pointer}nav{grid-template-columns:repeat(3,minmax(0,1fr))}@media(min-width:800px){#pad-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}

@@ -10,7 +10,7 @@ const fixture=require('./audio-fixture.cjs'),base=process.env.WELL_TEST_URL;
   });
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+suffix);await page.waitForFunction(()=>typeof db!=='undefined'&&db);
-  assert((await page.locator('.release-version').textContent()).includes('3.0.1'));
+  assert((await page.locator('.release-version').textContent()).includes('3.1.0'));
   await page.evaluate(async bytes=>persist(0,{name:'Existing saved sound',blob:new Blob([new Uint8Array(bytes)],{type:'audio/wav'})}),Array.from(fixture));
   await page.locator('.pad').first().click();await page.waitForFunction(()=>document.querySelector('#status').textContent==='Playing Existing saved sound.');
   await page.waitForFunction(()=>[...active][0]?.audio.currentTime>.05);

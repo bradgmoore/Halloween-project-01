@@ -1,6 +1,6 @@
-importScripts('./cache-config.js?v=3.0.1');
-const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v8';
-const ASSETS=['./','./index.html','./style.css?v=3.0.1','./app.js?v=3.0.1','./iphone-audio.js?v=3.0.1','./microphone.js?v=3.0.1','./cache-config.js?v=3.0.1','./voice-effects.js?v=3.0.1','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./library.json','./audio/CREDITS.md'];
+importScripts('./cache-config.js?v=3.1.0');
+const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v9';
+const ASSETS=['./','./index.html','./style.css?v=3.1.0','./app.js?v=3.1.0','./iphone-audio.js?v=3.1.0','./microphone.js?v=3.1.0','./cache-config.js?v=3.1.0','./voice-effects.js?v=3.1.0','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./library.json','./audio/CREDITS.md'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL_CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE')self.skipWaiting()});
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
