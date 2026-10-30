@@ -24,7 +24,7 @@ function meterOff(){$('mic-meter').value=0;$('mic-level-text').textContent='Micr
 function stopMicrophone({discard=false}={}){
   ++micRequest;held=false;microphone.cancel();$('talk').classList.remove('speaking');$('talk').textContent='Hold to talk';$('talk').setAttribute('aria-pressed','false');
   const session=micSession;micSession=null;
-  if(session){clearInterval(session.meterTimer);session.source?.disconnect();session.effects?.destroy();session.stream.getTracks().forEach(t=>t.stop())}phoneOutput?.playbackMode();
+  if(session){clearInterval(session.meterTimer);session.source?.disconnect();session.effects?.destroy();session.stream.getTracks().forEach(t=>t.stop())}if(phoneOutput){phoneOutput.element.pause();phoneOutput.playbackMode()}
   if(recording){const take=recording;recording=null;take.discard=discard;clearTimeout(take.timer);if(take.recorder&&take.recorder.state!=='inactive')take.recorder.stop();else finishTake(take)}
   $('record').disabled=!db;$('finish').disabled=true;$('mic-device').disabled=false;$('detect-mic').disabled=false;meterOff();duckBackground();
 }
