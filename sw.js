@@ -1,8 +1,8 @@
-importScripts('./cache-config.js?v=3.2.1');
-const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v11';
-const ASSETS=['./','./index.html','./style.css?v=3.2.1','./app.js?v=3.2.1','./iphone-audio.js?v=3.2.1','./microphone.js?v=3.2.1','./cache-config.js?v=3.2.1','./voice-effects.js?v=3.2.1','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./audio/CREDITS.md','./audio/imported/halloween/CREDITS.md'];
+importScripts('./cache-config.js?v=3.3.0');
+const SHELL_CACHE=APP_CACHE_PREFIX+'shell-v12';
+const ASSETS=['./','./index.html','./style.css?v=3.3.0','./app.js?v=3.3.0','./iphone-audio.js?v=3.3.0','./microphone.js?v=3.3.0','./cache-config.js?v=3.3.0','./voice-effects.js?v=3.3.0','./voice-processor.js','./manifest.webmanifest','./icon.svg','./assets/ring-for-candy.png','./assets/speaker-check.wav','./audio/CREDITS.md','./audio/imported/halloween/CREDITS.md'];
 const LIBRARY_URL=new URL('./library.json',self.location.href);
-const FRESH_LIBRARY_URL=new URL(LIBRARY_URL);FRESH_LIBRARY_URL.searchParams.set('v','3.2.1');
+const FRESH_LIBRARY_URL=new URL(LIBRARY_URL);FRESH_LIBRARY_URL.searchParams.set('v','3.3.0');
 const PUBLISHED_AUDIO_PATH=new URL('./audio/imported/halloween/',self.location.href).pathname;
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const response=await fetch(new Request(FRESH_LIBRARY_URL.href,{cache:'no-store'}));

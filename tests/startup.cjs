@@ -9,15 +9,15 @@ const executablePath=process.env.CHROMIUM_PATH||(fs.existsSync('/usr/bin/chromiu
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath,args:['--autoplay-policy=no-user-gesture-required']});
  try{
-  // Both optional browser systems stall forever; the real 20 sounds still load.
-  for(const suffix of ['/','/beta/','/soundboard.html?v=3.2.1','/beta/soundboard.html?v=3.2.1']){
+  // Both optional browser systems stall forever; the real 24 tracks still load.
+  for(const suffix of ['/','/beta/','/soundboard.html?v=3.3.0','/beta/soundboard.html?v=3.3.0']){
    const context=await browser.newContext({serviceWorkers:'block'});
    await context.addInitScript(()=>{indexedDB.open=()=>({});navigator.serviceWorker.register=()=>new Promise(()=>{})});
    const page=await context.newPage();
    await page.route('**/library.json*',route=>route.fulfill({json:{clips:[]}}));
    await page.goto(base+suffix);
-   await page.waitForFunction(()=>document.querySelectorAll('.library-play').length===20);
-   assert.equal(await page.locator('#pad-grid .pad').count(),22);
+   await page.waitForFunction(()=>document.querySelectorAll('.library-play').length===24);
+   assert.equal(await page.locator('#pad-grid .pad').count(),26);
    assert.deepEqual(await page.locator('.clip-title').allTextContents(),catalog.clips.map(c=>c.title));
    await page.getByRole('button',{name:'Play '+catalog.clips[0].title,exact:true}).click();
    await page.waitForFunction(()=>[...active].some(item=>item.audio.currentTime>.05));
@@ -34,18 +34,18 @@ const executablePath=process.env.CHROMIUM_PATH||(fs.existsSync('/usr/bin/chromiu
    await navigator.serviceWorker.register('./legacy-empty-sw.js');await navigator.serviceWorker.ready;
   },{bytes});
   await page.goto(base+'/');assert.equal(await page.locator('#pad-grid button').count(),2);
-  await page.goto(base+'/soundboard.html?v=3.2.1');
-  await page.waitForFunction(()=>db&&clips[0]?.name==='Saved 0'&&document.querySelectorAll('.library-play').length===20);
-  assert.equal(await page.locator('#pad-grid .pad').count(),22);
-  await page.goto(base+'/update.html?v=3.2.1');
-  await page.waitForURL('**/?updated=3.2.1',{timeout:60000});
-  await page.waitForFunction(()=>db&&clips[0]?.name==='Saved 0'&&document.querySelectorAll('.library-play').length===20);
-  assert.equal(await page.locator('#pad-grid .pad').count(),22);
+  await page.goto(base+'/soundboard.html?v=3.3.0');
+  await page.waitForFunction(()=>db&&clips[0]?.name==='Saved 0'&&document.querySelectorAll('.library-play').length===24);
+  assert.equal(await page.locator('#pad-grid .pad').count(),26);
+  await page.goto(base+'/update.html?v=3.3.0');
+  await page.waitForURL('**/?updated=3.3.0',{timeout:60000});
+  await page.waitForFunction(()=>db&&clips[0]?.name==='Saved 0'&&document.querySelectorAll('.library-play').length===24);
+  assert.equal(await page.locator('#pad-grid .pad').count(),26);
   assert.deepEqual(await page.locator('[data-custom-index] > span').allTextContents(),['Saved 0','Saved 1']);
   const saved=await page.evaluate(async()=>{const rows=await new Promise((resolve,reject)=>{const r=db.transaction('clips').objectStore('clips').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});return Promise.all(rows.map(async row=>({name:row.name,hash:[...new Uint8Array(await crypto.subtle.digest('SHA-256',await row.blob.arrayBuffer()))].map(b=>b.toString(16).padStart(2,'0')).join('')})))});
   assert.deepEqual(saved.map(row=>row.name),['Saved 0','Saved 1','Saved 2','Saved 11']);assert(saved.every(row=>row.hash===hash));
   assert.equal(await page.evaluate(async()=>await(await(await caches.open('unrelated-app-cache')).match('/keep-this')).text()),'keep');
   await context.close();
-  console.log('PASS: all 20 bundled sounds appear and play despite stalled storage/service-worker setup and an empty network catalogue; stale two-button install upgrades in place, preserving all seeded recording bytes and unrelated caches.');
+  console.log('PASS: all 24 bundled tracks appear and play despite stalled storage/service-worker setup and an empty network catalogue; stale two-button install upgrades in place, preserving all seeded recording bytes and unrelated caches.');
  }finally{await browser.close()}
 })().catch(error=>{console.error(error);process.exit(1)});

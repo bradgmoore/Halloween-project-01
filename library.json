@@ -1,6 +1,6 @@
 {
   "title": "Ring for Candy · Halloween sounds",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "clips": [
     {
       "id": "bart-spooky-witch-cackle",
@@ -281,6 +281,74 @@
       "originalFile": "thud2.wav",
       "changes": "Peak-balanced original WAV recording to -3 dB and converted to 160 kbps MP3; audio not synthesized.",
       "sha256": "7c20b3a0c5707d32a6d9290f02cdaea2541bbbb2a1b05380e6e920f98eaa43b2"
+    },
+    {
+      "id": "oga-music-haunted-house-music",
+      "title": "Haunted House",
+      "kind": "music",
+      "url": "./audio/imported/halloween/haunted-house-music.mp3",
+      "duration": 165.067755,
+      "sourceUrl": "https://opengameart.org/content/haunted-track",
+      "creator": "Gena Sealov",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "originalTitle": "Haunted Track (minor)",
+      "originalFile": "haunted_track_minor_0.mp3",
+      "downloadUrl": "https://opengameart.org/sites/default/files/haunted_track_minor_0.mp3",
+      "sourceSha256": "4cee165c22e80c9d6d17e729f44ea945474d7aa33b953b97ee39a876cb37ffa0",
+      "changes": "Complete original composition, loudness-normalized to -18 LUFS and converted to 160 kbps MP3; no trimming or synthesis.",
+      "sha256": "35a8aa06dd9deb6704ac45be73a1187a62777fe2604401a26c1fdd9771a0ef27"
+    },
+    {
+      "id": "oga-music-spooky-tune-music",
+      "title": "Spooky Tune",
+      "kind": "music",
+      "url": "./audio/imported/halloween/spooky-tune-music.mp3",
+      "duration": 150.413061,
+      "sourceUrl": "https://opengameart.org/content/spooky-tune",
+      "creator": "tamesu",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "originalTitle": "Spooky Tune",
+      "originalFile": "spooky_tune_1.mp3",
+      "downloadUrl": "https://opengameart.org/sites/default/files/spooky_tune_1.mp3",
+      "sourceSha256": "3392b2e535f01b3a93629c168e877086893e6287a4b93ff4ed8aac45722f6c61",
+      "changes": "Complete original composition, loudness-normalized to -18 LUFS and converted to 160 kbps MP3; no trimming or synthesis.",
+      "sha256": "bec218b6e83a90efa35508a39ec527fcdfb397a00c4c9c672a822f50febaadc0"
+    },
+    {
+      "id": "oga-music-haunted-arcade-music",
+      "title": "Haunted Arcade",
+      "kind": "music",
+      "url": "./audio/imported/halloween/haunted-arcade-music.mp3",
+      "duration": 86.486599,
+      "sourceUrl": "https://opengameart.org/content/haunting-chiptune-loop-void-estate",
+      "creator": "Zane Little Music",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "originalTitle": "Void Estate (haunted arcade)",
+      "originalFile": "void_estate_haunted_arcade_0.ogg",
+      "downloadUrl": "https://opengameart.org/sites/default/files/void_estate_haunted_arcade_0.ogg",
+      "sourceSha256": "c98e5230560ddd0a54eecb9d3690563600e2ea3d058799c806d5fceb8b12f284",
+      "changes": "Complete original composition, loudness-normalized to -18 LUFS and converted to 160 kbps MP3; no trimming or synthesis.",
+      "sha256": "1560009bb1a5ca39d9c72646175b23af6861d60d0dfc947b9087d3ff1ee31afa"
+    },
+    {
+      "id": "oga-music-spooky-dungeon-music",
+      "title": "Spooky Dungeon",
+      "kind": "music",
+      "url": "./audio/imported/halloween/spooky-dungeon-music.mp3",
+      "duration": 31.031995,
+      "sourceUrl": "https://opengameart.org/content/spooky-dungeon",
+      "creator": "Memoraphile @ You're Perfect Studio",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "originalTitle": "Spooky Dungeon",
+      "originalFile": "Memoraphile - Spooky Dungeon.mp3",
+      "downloadUrl": "https://opengameart.org/sites/default/files/Memoraphile%20-%20Spooky%20Dungeon.mp3",
+      "sourceSha256": "4b96991551d749e800054ea17059a5607541d08e01ce681bdf24aa36c60e0f2f",
+      "changes": "Complete original composition, loudness-normalized to -18 LUFS and converted to 160 kbps MP3; no trimming or synthesis.",
+      "sha256": "c8a60656e0847a76e33acaa0158f2737e94b063aa9a688c28644293e0eb445ff"
     }
   ]
 }

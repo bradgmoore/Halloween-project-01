@@ -110,15 +110,15 @@ async function playTrack(page, clip, reference) {
   try {
     for (const suffix of ['/', '/beta/']) {
       const catalog = JSON.parse(fs.readFileSync(path.join(root, suffix === '/' ? 'library.json' : 'beta/library.json'), 'utf8')).clips;
-      assert.equal(catalog.length, 20, `${suffix} published catalogue must contain the actual twenty tracks`);
+      assert.equal(catalog.length, 24, `${suffix} published catalogue must contain the twenty effects and four music tracks`);
       const context = await browser.newContext(), page = await context.newPage();
       const errors = [], externalRequests = [];
       page.on('pageerror', error => errors.push(error.message));
       page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== new URL(base).origin) externalRequests.push(request.url()); });
       try {
         await page.goto(base + suffix);
-        await page.waitForFunction(() => db && libraryEntries.length === 20 && document.querySelectorAll('#pad-grid .pad').length === 22);
-        assert.equal(await page.locator('.library-play').count(), 20);
+        await page.waitForFunction(() => db && libraryEntries.length === 24 && document.querySelectorAll('#pad-grid .pad').length === 26);
+        assert.equal(await page.locator('.library-play').count(), 24);
         assert.equal(await page.locator('[data-custom-index]').count(), 2);
         assert.equal(await page.locator('#target option').count(), 2);
         assert.equal(await page.evaluate(() => clips.filter(Boolean).length), 0, 'fresh context unexpectedly contained custom recordings');
@@ -131,7 +131,7 @@ async function playTrack(page, clip, reference) {
         const originalCustom = await customSnapshot(page);
         await page.evaluate(() => navigator.serviceWorker.ready);
         await page.reload();
-        await page.waitForFunction(() => navigator.serviceWorker.controller && db && libraryEntries.length === 20);
+        await page.waitForFunction(() => navigator.serviceWorker.controller && db && libraryEntries.length === 24);
         assert.deepEqual(await customSnapshot(page), originalCustom);
         const references = new Map();
         for (const clip of catalog) {
@@ -140,6 +140,22 @@ async function playTrack(page, clip, reference) {
         }
         assert.deepEqual(await customSnapshot(page), originalCustom, 'published playback changed custom or retired recordings');
         assert.deepEqual(await page.locator('[data-custom-index] span').allTextContents(), ['My first custom', 'My second custom']);
+        // Music buttons are easy to find and keep their loop/Stop behavior.
+        await page.locator('#sound-filter').selectOption('music');
+        assert.equal(await page.locator('.library-play').count(), 4);
+        assert.equal(await page.locator('[data-custom-index]').count(), 2);
+        const music = catalog.find(clip => clip.kind === 'music');
+        await page.locator(`.library-play[data-clip-id="published:${music.id}"]`).click();
+        await page.waitForFunction(() => [...active].some(item => item.audio && item.audio.loop && !item.audio.paused));
+        await page.locator('#music-loop').uncheck();
+        assert.equal(await page.evaluate(() => [...active][0].audio.loop), false);
+        await page.locator('#music-loop').check();
+        assert.equal(await page.evaluate(() => [...active][0].audio.loop), true);
+        await page.locator('#stop').click();
+        assert.equal(await page.evaluate(() => active.size), 0);
+        await page.locator('#sound-filter').selectOption('effects');
+        assert.equal(await page.locator('.library-play').count(), 20);
+        await page.locator('#sound-filter').selectOption('all');
         const query = catalog[0].title.toLowerCase();
         await page.locator('#library-search').fill(query);
         assert.equal(await page.locator('.library-play').count(), catalog.filter(clip => clip.title.toLowerCase().includes(query)).length);
@@ -157,11 +173,11 @@ async function playTrack(page, clip, reference) {
         assert.deepEqual(externalRequests, [], 'actual catalogue playback requested another website');
         await page.setViewportSize({ width: 390, height: 900 });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-        assert.equal(await page.locator('#pad-grid .pad').count(), 22);
+        assert.equal(await page.locator('#pad-grid .pad').count(), 26);
         if (process.env.WELL_PUBLISHED_SCREENSHOT && suffix === '/') await page.screenshot({ path: process.env.WELL_PUBLISHED_SCREENSHOT, fullPage: true });
 
         // audioReference fetched every complete MP3 through the controlling worker.
-        // Confirm all twenty bytes are in this app's media namespace before offline use.
+        // Confirm all 24 files are in this app's media namespace before offline use.
         const cached = await page.evaluate(async entries => {
           const cache = await caches.open(APP_MEDIA_CACHE), result = [];
           for (const entry of entries) {
@@ -173,7 +189,7 @@ async function playTrack(page, clip, reference) {
         assert(cached.every(entry => entry.status === 200 && entry.size > 0), `${suffix} did not cache every complete actual MP3`);
         await context.setOffline(true);
         await page.reload();
-        await page.waitForFunction(() => db && libraryEntries.length === 20 && document.querySelectorAll('#pad-grid .pad').length === 22);
+        await page.waitForFunction(() => db && libraryEntries.length === 24 && document.querySelectorAll('#pad-grid .pad').length === 26);
         assert.deepEqual(await customSnapshot(page), originalCustom);
         for (const clip of catalog) {
           const offline = await page.evaluate(async entry => {
@@ -202,6 +218,6 @@ async function playTrack(page, clip, reference) {
         assert.deepEqual(errors, []);
       } finally { await context.close(); }
     }
-    console.log(`PASS: all twenty actual catalogue tracks appear and play in production and beta (22 pads each); ${measuredTracks} native outputs measured; custom/retired bytes preserved; search, overlap and Stop pass; all actual MP3s reload, hash-match, play and serve correct byte ranges offline. No provider redirects or fixture injection.`);
+    console.log(`PASS: all 24 actual catalogue tracks appear and play in production and beta (26 pads each); ${measuredTracks} native outputs measured; custom/retired bytes preserved; search, overlap and Stop pass; all actual MP3s reload, hash-match, play and serve correct byte ranges offline. No provider redirects or fixture injection.`);
   } finally { await browser.close(); }
 })().catch(require('./report-error.cjs'));

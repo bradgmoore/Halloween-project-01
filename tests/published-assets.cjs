@@ -9,7 +9,7 @@ const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 
 const root = fs.realpathSync(path.resolve(__dirname, '..'));
-const expectedTracks = 20;
+const expectedTracks = 24;
 const projectPath = '/Halloween-project-01/';
 const ffprobe = process.env.FFPROBE_PATH || 'ffprobe';
 const ffmpeg = process.env.FFMPEG_PATH || 'ffmpeg';
@@ -67,6 +67,9 @@ function readCatalog(manifest) {
   requireText(data.title, `${manifest} title`);
   assert(Array.isArray(data.clips), `${manifest} needs a clips array`);
   assert.equal(data.clips.length, expectedTracks, `${manifest} must publish all ${expectedTracks} real tracks`);
+  assert.equal(data.clips.filter(clip => clip.kind === 'effects').length, 20, 'Preserve all twenty Halloween effects');
+  assert.equal(data.clips.filter(clip => clip.kind === 'music').length, 4, 'Publish four spooky music tracks');
+  assert(data.clips.filter(clip => clip.kind === 'music').every(clip => clip.duration > 20), 'Publish full music compositions, not effect snippets');
   const ids = new Set(), files = new Set(), hashes = new Set();
   return data.clips.map(clip => {
     assert(clip && typeof clip === 'object' && !Array.isArray(clip), `${manifest} contains an invalid track`);

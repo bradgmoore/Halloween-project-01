@@ -1,5 +1,7 @@
 # Local Codex handoff: finish the Ring for Candy audio catalogue
 
+> **Latest update, 31 October 2026, v3.3.0:** the published catalogue now has **20 effects plus 4 CC0 spooky music tracks** (Haunted House, Spooky Tune, Haunted Arcade, Spooky Dungeon), alongside the existing two custom slots. Use **Show → Spooky music**; Loop music is enabled by default. All 24 entries are bundled for immediate startup, hosted locally and cached offline in root and beta. Current source, credits and hashes are in the manifests and `audio/imported/halloween/CREDITS.md`. Re-import music with `node tools/import-music.cjs`; `tools/sync-catalog.cjs` updates beta and both bundled fallbacks. Tests cover 26 buttons, real output from 48 root/beta tracks, filtering/loop/Stop, offline hashes/ranges and recording preservation. The older scope below is historical. Continue pushing completed updates and verifying Pages plus regression checks.
+
 > **Continuation update, 31 October 2026:** the user changed the scope to **20 Halloween sounds** and requested completed updates be pushed automatically. Version 3.2.0 now contains twenty actual recordings from bart's OpenGameArt spooky pack under CC BY 3.0, shared by production and beta. See `README.md`, the populated manifests, and `audio/imported/halloween/CREDITS.md` for current state, provenance and exact inventory. The blocked Pixabay file was not retrieved; Pixabay/Epidemic counts remain zero. The original handoff below records the earlier scope and cloud state and is retained as history.
 
 Exported 31 October 2026, Australia/Sydney.

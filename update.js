@@ -1,5 +1,5 @@
 'use strict';
-const updateVersion='3.2.1';
+const updateVersion='3.3.0';
 const updateStatus=document.getElementById('update-status');
 const retryUpdate=document.getElementById('retry-update');
 async function refreshSoundboard(){

@@ -35,7 +35,7 @@ The source page calls the collection “25 spooky sound effects”; the download
 
 Original archive SHA-256: `9d9b07dcecde46fe56be265e2d4b96ad84f85c191c5006a20458731829e8cdd3`.
 
-All twenty MP3s are hosted with the app. Both production and beta use these same files; track IDs, original names, decoded durations and SHA-256 hashes are recorded in their published `library.json` catalogues.
+All twenty effect MP3s and four music MP3s are hosted with the app. Both production and beta use these same files; track IDs, original names, decoded durations and SHA-256 hashes are recorded in their published `library.json` catalogues.
 
 Pixabay: 0 imported. Epidemic Sound: 0 imported. The downloadable, hosting-permitted OpenGameArt recordings provide the requested twenty Halloween sounds after the original source download was blocked. No blocked Pixabay file was retrieved, no subscription was purchased, and no custom recording slot was overwritten.
 
@@ -45,7 +45,21 @@ Download the archive linked by the original source page: [spookysounds.zip](http
 
 ```text
 node tools/import-spooky.cjs path/to/spookysounds.zip
+node tools/import-music.cjs
 node tests/published-assets.cjs
 ```
 
 The original ZIP and WAV files are kept outside the published catalogue. The original author retains attribution under CC BY 3.0; this application's own licensing does not replace the audio licence.
+
+## Spooky music · added in 3.3.0
+
+Four complete original compositions from OpenGameArt, individually selected and published under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Credit is retained here even though CC0 does not require attribution. The music was loudness-normalized to -18 LUFS and converted to 160 kbps / 44.1 kHz MP3, without trimming or synthesized replacement. The catalogues include original download URLs, source and exported SHA-256 hashes, and measured durations.
+
+| Soundpad button | Original work / creator | Source |
+| --- | --- | --- |
+| Haunted House | Haunted Track (minor), Gena Sealov | [Original page](https://opengameart.org/content/haunted-track) |
+| Spooky Tune | Spooky Tune, tamesu | [Original page](https://opengameart.org/content/spooky-tune) |
+| Haunted Arcade | Void Estate (haunted arcade), Zane Little Music | [Original page](https://opengameart.org/content/haunting-chiptune-loop-void-estate) |
+| Spooky Dungeon | Spooky Dungeon, Memoraphile @ You're Perfect Studio | [Original page](https://opengameart.org/content/spooky-dungeon) |
+
+Music repeats when Loop music is checked; tap an active music button or Stop to end playback. No Pixabay or Epidemic content is included.

@@ -59,8 +59,11 @@ const clips = selected.map(([originalFile, slug, title]) => {
     changes: 'Peak-balanced original WAV recording to -3 dB and converted to 160 kbps MP3; audio not synthesized.',
     sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')};
 });
-const catalog = {title: 'Ring for Candy · Halloween sounds', version: '3.2.1', clips};
+const existing = JSON.parse(fs.readFileSync(path.join(root, 'library.json'), 'utf8'));
+const catalog = {title: 'Ring for Candy · Halloween sounds', version: '3.3.0', clips: [...clips, ...existing.clips.filter(clip => clip.kind === 'music')]};
 fs.writeFileSync(path.join(root, 'library.json'), JSON.stringify(catalog, null, 2) + '\n');
 fs.writeFileSync(path.join(root, 'beta', 'library.json'), JSON.stringify({...catalog,
-  clips: clips.map(clip => ({...clip, url: '.' + clip.url}))}, null, 2) + '\n');
+  clips: catalog.clips.map(clip => ({...clip, url: '.' + clip.url}))}, null, 2) + '\n');
 console.log(`Imported ${clips.length} real Halloween recordings, ${clips.reduce((n, clip) => n + fs.statSync(path.resolve(root, clip.url)).size, 0)} bytes. Root and beta catalogues populated.`);
+
+require('./sync-catalog.cjs');
